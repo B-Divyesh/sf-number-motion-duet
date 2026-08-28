@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-28T17:18:23.312Z",
+  "generatedAt": "2026-08-28T17:58:18.912Z",
   "base": "https://number-motion-duet.sociobot.in",
   "routes": [
     {
@@ -8,7 +8,7 @@
       "title": "Number Motion Duet — Move together to learn numbers",
       "lang": "en",
       "h1": [
-        "Make number play a shared movement game"
+        "Practice numbers with claps and steps"
       ],
       "mainCount": 1,
       "seriousCritical": [],
@@ -80,8 +80,8 @@
   ],
   "flow": {
     "firstScreen": {
-      "h1": "Make number play a shared movement game",
-      "visibleText": "Skip to the game\nNumber Motion Duet\nDemo\nPlay\nPrivacy\n\nA SHARED TABLE GAME\n\nMake number play a shared movement game\n\nFor caregivers and preschoolers who want numbers to involve both bodies.\n\nTry it with sample data\nStarts a ready-made clap round.\nPlay without an account.\nUse touch or keyboard.\nFree to play.\n\nTAKE TURNS\n\nMake one number a whole-body idea\n1\nChoose the motion\n\nThe adult picks claps or steps before the round.\n\n2\nCall the number\n\nThe adult taps a number and says it aloud.\n\n3\nMake the marks\n\nThe child moves. Both see one shape for each motion.\n\n✦\nA game, not a drill app\n\nThere are no videos, ads, accounts, cameras, or online scores. The adult stays part of the loop.\n\nStart a new game without sample rounds.\n\nA shared clap or step game for preschool number play.\nPrivacy\nTerms\nBuilt by Param Factory\n(external site)\nv1.0.0",
+      "h1": "Practice numbers with claps and steps",
+      "visibleText": "Skip to the game\nNumber Motion Duet\nDemo\nPlay\nPrivacy\n\nA SHARED TABLE GAME\n\nPractice numbers with claps and steps\n\nFor caregivers and preschoolers who want numbers to involve both bodies.\n\nTry it with sample data\nStarts a ready-made clap round.\nPlay without an account.\nUse touch or keyboard.\nFree to play.\n\nTAKE TURNS\n\nMake one number a whole-body idea\n1\nChoose the motion\n\nThe adult picks claps or steps before the round.\n\n2\nCall the number\n\nThe adult taps a number and says it aloud.\n\n3\nMake the marks\n\nThe child moves. Both see one shape for each motion.\n\n✦\nA game, not a drill app\n\nThere are no videos, ads, accounts, cameras, or online scores. The adult stays part of the loop.\n\nStart a new game without sample rounds.\n\nA shared clap or step game for preschool number play.\nPrivacy\nTerms\nBuilt by Param Factory\n(external site)\nv1.0.0",
       "actions": [
         {
           "text": "Number Motion Duet",
@@ -539,11 +539,11 @@
     "status": true,
     "cachesBefore": [
       {
-        "name": "number-motion-duet-43e7f7a06169",
+        "name": "number-motion-duet-5b3bce094edc",
         "paths": [
           "/",
           "/apple-touch-icon.svg",
-          "/assets/index-BNUziDtJ.js",
+          "/assets/index-D_1ccuku.js",
           "/assets/notebook-hero-CdjKL61a.webp",
           "/assets/style-rXKT0Oem.css",
           "/demo",

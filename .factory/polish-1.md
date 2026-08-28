@@ -33,5 +33,18 @@ requirements in this work order.
 and `npm run build` passed. `npm test` passed 21/21. Every exact claim command
 in `.factory/claims.json` was then run separately and passed.
 
-The deployment and cold live recheck evidence is appended to
-`.factory/handoff.md` after the factory static deployment is available.
+## Deployed cold recheck
+
+The static deployment completed as `db7bb30b-4029-49b9-a359-be16770c238b` and
+the live site byte-matches the local production build. The current live evidence
+is `.factory/evidence/qa-live.json` and the cold root screenshots are
+`.factory/evidence/polish-1-verify-url/screenshot-desktop.png` and
+`.factory/evidence/polish-1-verify-url/screenshot-mobile.png`.
+
+Cold checks at <https://number-motion-duet.sociobot.in> confirmed the revised
+first screen, the one-click `/demo` route, direct `?demo=1` banner/reset path,
+all legal links, dynamic Privacy metadata/focus, sitemap routes, and an HTTP
+404 for a missing URL. The live Playwright Axe scan has no violations; the
+standalone Axe CLI was attempted but cannot discover a Chrome binary in this
+container, so the checked-in Playwright Axe integration is the repeatable CLI
+alternative.
