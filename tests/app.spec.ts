@@ -42,6 +42,7 @@ test('@claim:keyboard Use touch or keyboard', async ({ page }) => {
   await five.focus();
   await page.keyboard.press('Enter');
   await expect(page.getByRole('button', { name: 'We did 5 claps' })).toBeVisible();
+  await expect(five).toBeFocused();
   const done = page.getByRole('button', { name: 'We did 5 claps' });
   await done.focus();
   await page.keyboard.press('Space');
@@ -77,11 +78,13 @@ test('@claim:offline-demo Demo works offline after its first visit', async ({ pa
   await expect(page.getByText('Offline. This game still works here.')).toBeVisible();
 });
 
-test('has no serious or critical accessibility violations', async ({ page }) => {
-  await page.goto('/demo');
-  const results = await new AxeBuilder({ page: page as never }).analyze();
-  const serious = results.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact ?? ''));
-  expect(serious).toEqual([]);
+test('has no serious or critical accessibility violations on every route', async ({ page }) => {
+  for (const path of ['/', '/demo', '/game', '/privacy', '/terms', '/404.html']) {
+    await page.goto(path);
+    const results = await new AxeBuilder({ page: page as never }).analyze();
+    const serious = results.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact ?? ''));
+    expect(serious, path).toEqual([]);
+  }
 });
 
 test('routes, title, and reset control work', async ({ page }) => {
@@ -94,7 +97,7 @@ test('routes, title, and reset control work', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Your game stays on this device' })).toBeVisible();
 });
 
-test('fits a 390px phone and loads without console errors', async ({ page }) => {
+test('fits a 390px phone at default and 200% text size without console errors', async ({ page }) => {
   const errors: string[] = [];
   page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()); });
   page.on('pageerror', (error) => errors.push(error.message));
@@ -103,6 +106,9 @@ test('fits a 390px phone and loads without console errors', async ({ page }) => 
   await expect(page.getByRole('button', { name: 'We did 4 claps' })).toBeVisible();
   const dimensions = await page.evaluate(() => ({ width: document.documentElement.scrollWidth, viewport: window.innerWidth }));
   expect(dimensions.width).toBeLessThanOrEqual(dimensions.viewport);
+  await page.evaluate(() => { document.documentElement.style.fontSize = '200%'; });
+  const zoomedDimensions = await page.evaluate(() => ({ width: document.documentElement.scrollWidth, viewport: window.innerWidth }));
+  expect(zoomedDimensions.width).toBeLessThanOrEqual(zoomedDimensions.viewport);
   expect(errors).toEqual([]);
 });
 
@@ -117,8 +123,8 @@ test('recovers safely from damaged saved state and uses singular motion words', 
 
 test('mobile navigation and footer links meet the 44px touch-target baseline', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/game');
-  const targets = page.locator('.wordmark, .nav a, .site-footer a');
+  await page.goto('/demo');
+  const targets = page.locator('.wordmark, .nav a, .site-footer a, .text-button');
   const boxes = await targets.evaluateAll((links) => links.map((link) => {
     const box = link.getBoundingClientRect();
     return { label: link.textContent?.trim(), width: box.width, height: box.height };
@@ -133,7 +139,92 @@ test('mobile navigation and footer links meet the 44px touch-target baseline', a
   expect(skip?.height).toBeGreaterThanOrEqual(44);
 });
 
-test('production service worker updates an old controlled client cache to the current release', async () => {
+test('storage write failures keep the completed round visible and explain recovery', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.addInitScript(() => {
+    const original = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (storageKey: string, value: string) {
+      if (storageKey.endsWith(':session')) throw new DOMException('Storage full', 'QuotaExceededError');
+      return original.call(this, storageKey, value);
+    };
+  });
+  await page.goto('/game');
+  await page.getByRole('button', { name: 'We did 1 clap' }).click();
+  await expect(page.getByText('1 round marked')).toBeVisible();
+  await expect(page.getByText('Your browser could not save the game. You can still play this round.')).toBeVisible();
+  await expect(page.locator('.round-log li')).toHaveText(['1 clap']);
+  expect(errors).toEqual([]);
+});
+
+test('storage delete failures never block demo reset or starting a separate real game', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.addInitScript(() => {
+    localStorage.setItem('demo:number-motion-duet:session', JSON.stringify({ motion: 'steps', count: 7, rounds: [{ count: 7, motion: 'steps' }], confirmed: false }));
+    const original = Storage.prototype.removeItem;
+    Storage.prototype.removeItem = function (storageKey: string) {
+      if (storageKey === 'demo:number-motion-duet:session') throw new DOMException('Access denied', 'SecurityError');
+      return original.call(this, storageKey);
+    };
+  });
+  await page.goto('/demo');
+  await page.getByRole('button', { name: 'Reset demo' }).click();
+  await expect(page.getByText('2 rounds marked')).toBeVisible();
+  await expect(page.getByText('Your browser could not reset the saved demo. A fresh sample is ready for this visit.')).toBeVisible();
+  await page.getByRole('button', { name: 'Start for real' }).click();
+  await expect(page).toHaveURL(/\/game$/);
+  await expect(page.getByText('0 rounds marked')).toBeVisible();
+  await expect(page.getByText('Your browser could not clear the saved demo. Your real game is still separate.')).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
+test('@claim:free-to-play Free to play', async ({ page }) => {
+  await page.goto('/demo');
+  await expect(page.getByRole('button', { name: /pay|buy|subscribe/i })).toHaveCount(0);
+  await expect(page.locator('form, input[type="payment"], iframe')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'We did 4 claps' })).toBeEnabled();
+});
+
+test('@claim:no-online-features Uses no videos, ads, accounts, cameras, or online scores', async ({ page }) => {
+  const requests: string[] = [];
+  await page.addInitScript(() => {
+    let cameraCalls = 0;
+    const mediaDevices = navigator.mediaDevices;
+    if (mediaDevices) Object.defineProperty(mediaDevices, 'getUserMedia', { configurable: true, value: () => { cameraCalls += 1; return Promise.reject(new Error('Camera is unavailable')); } });
+    Object.defineProperty(window, '__cameraCalls', { configurable: true, get: () => cameraCalls });
+  });
+  page.on('request', (request) => requests.push(request.url()));
+  await page.goto('/demo');
+  await page.getByRole('button', { name: 'We did 4 claps' }).click();
+  await expect(page.locator('video, audio, iframe, [data-ad], [data-score], input[type="email"]')).toHaveCount(0);
+  expect(await page.evaluate(() => (window as Window & { __cameraCalls?: number }).__cameraCalls)).toBe(0);
+  expect(requests.every((url) => new URL(url).origin === 'http://127.0.0.1:4173')).toBeTruthy();
+});
+
+test('@claim:no-personal-details Does not ask for names, email addresses, photos, locations, or child details', async ({ page }) => {
+  await page.goto('/privacy');
+  await expect(page.getByText('We do not ask for names, email addresses, photos, locations, or child details.')).toBeVisible();
+  await expect(page.locator('form, input, textarea, select, [contenteditable="true"]')).toHaveCount(0);
+});
+
+test('@claim:no-remote-resources Uses no remote fonts, analytics, trackers, or runtime third-party scripts', async ({ page }) => {
+  const requests: string[] = [];
+  page.on('request', (request) => requests.push(request.url()));
+  await page.goto('/demo');
+  await page.getByRole('button', { name: 'We did 4 claps' }).click();
+  expect(requests.every((url) => new URL(url).origin === 'http://127.0.0.1:4173')).toBeTruthy();
+  expect(await page.locator('script[src^="http"], link[rel="stylesheet"][href^="http"]').count()).toBe(0);
+});
+
+test('updates canonical metadata for each real app URL', async ({ page }) => {
+  await page.goto('/demo');
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'http://127.0.0.1:4173/demo');
+  await page.getByRole('link', { name: 'Privacy' }).first().click();
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'http://127.0.0.1:4173/privacy');
+});
+
+test('@claim:release-updates Installed copies receive releases safely', async () => {
   const worker = await readFile('dist/sw.js', 'utf8');
   expect(worker).toMatch(/const CACHE = 'number-motion-duet-[a-f0-9]{12}'/);
   expect(worker).toMatch(/\/assets\/index-[a-zA-Z0-9_-]+\.js/);
@@ -189,4 +280,9 @@ test('Static Web Apps has a real styled 404 response override', async () => {
   const page404 = await readFile('public/404.html', 'utf8');
   expect(page404).toContain('<main id="main"');
   expect(page404).toContain('<h1>That page has wandered off.</h1>');
+  expect(page404).toContain('aria-label="Main navigation"');
+  expect(page404).toContain('Built by Param Factory');
+  expect(page404).toContain('href="/terms"');
+  const sitemap = await readFile('public/sitemap.xml', 'utf8');
+  expect(sitemap).toContain('https://number-motion-duet.sociobot.in/game');
 });

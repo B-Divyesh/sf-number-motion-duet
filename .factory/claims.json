@@ -15,7 +15,7 @@
   },
   {
     "id": "local-game",
-    "claim": "Play without an account and keep round history in this browser",
+    "claim": "Play without an account, keep round history in this browser, and send it nowhere",
     "where": "Landing facts and Privacy page",
     "test": "npm test -- --grep @claim:local-game",
     "sandbox": "Fresh browser context at /demo; finish a round and observe storage and all network requests."
@@ -26,5 +26,40 @@
     "where": "Demo offline status",
     "test": "npm test -- --grep @claim:offline-demo",
     "sandbox": "Fresh browser context at /demo; wait for the service worker, go offline, then reload /demo."
+  },
+  {
+    "id": "free-to-play",
+    "claim": "Free to play",
+    "where": "Landing facts, Terms page, README",
+    "test": "npm test -- --grep @claim:free-to-play",
+    "sandbox": "Fresh browser context at /demo; verify that the complete sample round is available without payment, subscription, purchase, form, or embedded checkout."
+  },
+  {
+    "id": "no-online-features",
+    "claim": "There are no videos, ads, accounts, cameras, or online scores",
+    "where": "Landing privacy note",
+    "test": "npm test -- --grep @claim:no-online-features",
+    "sandbox": "Fresh browser context at /demo; complete a round while recording requests and camera calls, then verify no media, ad, score, account, or camera interface exists."
+  },
+  {
+    "id": "no-personal-details",
+    "claim": "Does not ask for names, email addresses, photos, locations, or child details",
+    "where": "Privacy page",
+    "test": "npm test -- --grep @claim:no-personal-details",
+    "sandbox": "Fresh browser context at /privacy; verify the disclosed data practice and absence of forms or personal-data fields."
+  },
+  {
+    "id": "no-remote-resources",
+    "claim": "Uses no remote fonts, analytics, trackers, or runtime third-party scripts",
+    "where": "README",
+    "test": "npm test -- --grep @claim:no-remote-resources",
+    "sandbox": "Fresh browser context at /demo; complete a round and assert every runtime request, script, and stylesheet is same-origin."
+  },
+  {
+    "id": "release-updates",
+    "claim": "The build hashes app assets and generates a versioned service-worker cache so installed copies receive releases safely",
+    "where": "README",
+    "test": "npm test -- --grep @claim:release-updates",
+    "sandbox": "Production build: execute the generated service worker activation against an old Number Motion Duet cache and assert it removes only the old product cache."
   }
 ]

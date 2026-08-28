@@ -15,11 +15,13 @@ const titles: Record<string, string> = {
 };
 let online = navigator.onLine;
 let status = '';
+const inMemorySessions = new Map<string, Session>();
 
 function isDemo() { return location.pathname === '/demo' || new URLSearchParams(location.search).get('demo') === '1'; }
 function key() { return isDemo() ? 'demo:number-motion-duet:session' : 'number-motion-duet:session'; }
 function sampleSession(): Session { return { motion: 'claps', count: 4, rounds: [{ count: 2, motion: 'claps' }, { count: 3, motion: 'steps' }], confirmed: false }; }
 function emptySession(): Session { return { motion: 'claps', count: 1, rounds: [], confirmed: false }; }
+function copySession(session: Session): Session { return { ...session, rounds: session.rounds.map((round) => ({ ...round })) }; }
 function motionLabel(count: number, motion: Motion) { return count === 1 ? (motion === 'claps' ? 'clap' : 'step') : motion; }
 function validMotion(value: unknown): value is Motion { return value === 'claps' || value === 'steps'; }
 function validRound(value: unknown): value is Round {
@@ -41,6 +43,8 @@ function storedSession(value: unknown): Session | null {
 }
 function readSession(): Session {
   const fallback = isDemo() ? sampleSession : emptySession;
+  const inMemory = inMemorySessions.get(key());
+  if (inMemory) return copySession(inMemory);
   let saved: string | null;
   try { saved = localStorage.getItem(key()); }
   catch { status = 'Your browser could not open saved rounds. You can still play this round.'; return fallback(); }
@@ -55,7 +59,26 @@ function readSession(): Session {
   status = 'Saved rounds could not be read, so a new game started.';
   return fallback();
 }
-function saveSession(value: Session) { try { localStorage.setItem(key(), JSON.stringify(value)); } catch { status = 'Your browser could not save the game. You can still play this round.'; } }
+function saveSession(value: Session) {
+  const storageKey = key();
+  try {
+    localStorage.setItem(storageKey, JSON.stringify(value));
+    inMemorySessions.delete(storageKey);
+  } catch {
+    inMemorySessions.set(storageKey, copySession(value));
+    status = 'Your browser could not save the game. You can still play this round.';
+  }
+}
+function removeSession(storageKey: string, replacement: Session | null, failureMessage: string) {
+  try {
+    localStorage.removeItem(storageKey);
+    inMemorySessions.delete(storageKey);
+  } catch {
+    if (replacement) inMemorySessions.set(storageKey, copySession(replacement));
+    else inMemorySessions.delete(storageKey);
+    status = failureMessage;
+  }
+}
 function escapeHtml(value: string) { return value.replace(/[&<>"]/g, (character) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[character]!)); }
 function nav(path: string) { history.pushState({}, '', path); render(true); }
 function active(path: string) { return location.pathname === path ? ' aria-current="page"' : ''; }
@@ -93,24 +116,26 @@ function legal(kind: 'privacy' | 'terms') {
 function notFound() { return `<section class="not-found"><p class="eyebrow">Page not found</p><h1>That page has wandered off.</h1><p>Try the shared number game from the beginning.</p><a class="button primary" href="/" data-link>Go to the home page</a></section>`; }
 function page() { const path = location.pathname; if (isDemo()) return game(); if (path === '/') return landing(); if (path === '/game') return game(); if (path === '/privacy') return legal('privacy'); if (path === '/terms') return legal('terms'); return notFound(); }
 function routeName() { if (isDemo()) return 'Demo game'; if (location.pathname === '/game') return 'Game'; if (location.pathname === '/privacy') return 'Privacy'; if (location.pathname === '/terms') return 'Terms'; if (location.pathname === '/') return 'Home'; return 'Page not found'; }
-function render(announce = false) {
-  status = '';
+function render(announce = false, focusSelector?: string) {
   document.title = isDemo() ? titles['/demo'] : titles[location.pathname] || 'Page not found — Number Motion Duet';
+  const canonicalPath = isDemo() ? '/demo' : location.pathname;
+  document.querySelector<HTMLLinkElement>('link[rel="canonical"]')?.setAttribute('href', new URL(canonicalPath, location.origin).href);
   app.innerHTML = layout(page());
-  app.querySelectorAll<HTMLAnchorElement>('[data-link]').forEach((link) => link.addEventListener('click', (event) => { event.preventDefault(); nav(link.pathname); }));
-  app.querySelectorAll<HTMLButtonElement>('[data-motion]').forEach((button) => button.addEventListener('click', () => { const session = readSession(); session.motion = button.dataset.motion as Motion; session.confirmed = false; saveSession(session); render(); }));
-  app.querySelectorAll<HTMLButtonElement>('[data-count]').forEach((button) => button.addEventListener('click', () => { const session = readSession(); session.count = Number(button.dataset.count); session.confirmed = false; saveSession(session); render(); }));
+  app.querySelectorAll<HTMLAnchorElement>('[data-link]').forEach((link) => link.addEventListener('click', (event) => { event.preventDefault(); status = ''; nav(link.pathname); }));
+  app.querySelectorAll<HTMLButtonElement>('[data-motion]').forEach((button) => button.addEventListener('click', () => { status = ''; const session = readSession(); session.motion = button.dataset.motion as Motion; session.confirmed = false; saveSession(session); render(false, `[data-motion="${session.motion}"]`); }));
+  app.querySelectorAll<HTMLButtonElement>('[data-count]').forEach((button) => button.addEventListener('click', () => { status = ''; const session = readSession(); session.count = Number(button.dataset.count); session.confirmed = false; saveSession(session); render(false, `[data-count="${session.count}"]`); }));
   app.querySelectorAll<HTMLButtonElement>('[data-action]').forEach((button) => button.addEventListener('click', () => action(button.dataset.action!)));
+  if (focusSelector) requestAnimationFrame(() => app.querySelector<HTMLElement>(focusSelector)?.focus({ preventScroll: true }));
   if (announce) requestAnimationFrame(() => { const heading = app.querySelector<HTMLElement>('h1'); heading?.setAttribute('tabindex', '-1'); heading?.focus({ preventScroll: true }); const live = app.querySelector('#route-announcement'); if (live) live.textContent = `${routeName()} loaded`; });
 }
 function action(name: string) {
-  if (name === 'reset-demo') { localStorage.removeItem('demo:number-motion-duet:session'); render(); return; }
-  if (name === 'start-real') { localStorage.removeItem('demo:number-motion-duet:session'); nav('/game'); return; }
+  if (name === 'reset-demo') { status = ''; removeSession('demo:number-motion-duet:session', sampleSession(), 'Your browser could not reset the saved demo. A fresh sample is ready for this visit.'); render(false, '[data-action="reset-demo"]'); return; }
+  if (name === 'start-real') { status = ''; removeSession('demo:number-motion-duet:session', sampleSession(), 'Your browser could not clear the saved demo. Your real game is still separate.'); nav('/game'); return; }
   const session = readSession();
-  if (name === 'confirm' && !session.confirmed) { session.rounds.push({ count: session.count, motion: session.motion }); session.confirmed = true; saveSession(session); render(); return; }
-  if (name === 'next') { session.count = (session.count % 10) + 1; session.confirmed = false; saveSession(session); render(); }
+  if (name === 'confirm' && !session.confirmed) { status = ''; session.rounds.push({ count: session.count, motion: session.motion }); session.confirmed = true; saveSession(session); render(false, '[data-action="next"]'); return; }
+  if (name === 'next') { status = ''; session.count = (session.count % 10) + 1; session.confirmed = false; saveSession(session); render(false, `[data-count="${session.count}"]`); }
 }
-window.addEventListener('popstate', () => render(true));
+window.addEventListener('popstate', () => { status = ''; render(true); });
 window.addEventListener('online', () => { online = true; render(); });
 window.addEventListener('offline', () => { online = false; render(); });
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => { /* Offline support is optional if registration fails. */ });
