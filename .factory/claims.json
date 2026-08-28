@@ -71,7 +71,7 @@
   },
   {
     "id": "release-updates",
-    "claim": "The build hashes app assets and generates a versioned service-worker cache so installed copies receive releases safely",
+    "claim": "Installed copies can update safely when a new release uses new file names",
     "where": "README",
     "test": "npm test -- --grep @claim:release-updates",
     "sandbox": "Production build: execute the generated service worker activation against an old Number Motion Duet cache and assert it removes only the old product cache."

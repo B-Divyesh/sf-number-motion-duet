@@ -80,6 +80,13 @@ test('@claim:seeded-demo The first-screen sample action opens a ready-made four-
   await expect(page.getByRole('button', { name: 'We did 4 claps' })).toBeVisible();
 });
 
+test('uses direct wording for the landing job and turn-taking instructions', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByRole('heading', { level: 1, name: 'Practice numbers with claps and steps' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Try it with sample data' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 2, name: 'Turn a number into claps or steps' })).toBeVisible();
+});
+
 test('@claim:shape-amount One shape mark appears for each completed motion', async ({ page }) => {
   await page.goto('/demo');
   await page.getByRole('button', { name: '7', exact: true }).click();
