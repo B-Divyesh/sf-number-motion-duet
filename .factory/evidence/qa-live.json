@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-28T18:44:44.734Z",
+  "generatedAt": "2026-08-28T19:36:14.066Z",
   "base": "https://number-motion-duet.sociobot.in",
   "routes": [
     {
@@ -76,12 +76,87 @@
       "externalRequests": [],
       "consoleErrors": [],
       "pageErrors": []
+    },
+    {
+      "route": "/not-a-real-page",
+      "status": 404,
+      "title": "Page not found — Number Motion Duet",
+      "lang": "en",
+      "h1": [
+        "Page not found."
+      ],
+      "mainCount": 1,
+      "seriousCritical": [],
+      "allAxeViolations": [],
+      "externalRequests": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ],
+      "pageErrors": []
     }
   ],
+  "polish3": {
+    "firstScreen": [
+      {
+        "label": "Practice numbers with claps and steps",
+        "visible": true,
+        "top": 212,
+        "bottom": 303.5625
+      },
+      {
+        "label": "Try it with sample data",
+        "visible": true,
+        "top": 404.1875,
+        "bottom": 452.1875
+      },
+      {
+        "label": "Play without an account.",
+        "visible": true,
+        "top": 516.1875,
+        "bottom": 534.1875
+      },
+      {
+        "label": "Use touch or keyboard.",
+        "visible": true,
+        "top": 539.1875,
+        "bottom": 557.1875
+      },
+      {
+        "label": "Free to play.",
+        "visible": true,
+        "top": 562.1875,
+        "bottom": 580.1875
+      }
+    ],
+    "forwardRoute": {
+      "scrollY": 0,
+      "top": 199.1875,
+      "bottom": 283.96875,
+      "viewport": 844
+    },
+    "homeScroll": 1375,
+    "screenshot": ".factory/evidence/polish-3-live-first-screen-mobile.png",
+    "consoleErrors": [],
+    "pageErrors": []
+  },
+  "demoQuery": {
+    "url": "https://number-motion-duet.sociobot.in/?demo=1",
+    "title": "Demo — Number Motion Duet",
+    "banner": true,
+    "reset": true,
+    "startReal": true,
+    "rounds": [
+      "3 steps",
+      "2 claps"
+    ],
+    "action": true,
+    "consoleErrors": [],
+    "pageErrors": []
+  },
   "flow": {
     "firstScreen": {
       "h1": "Practice numbers with claps and steps",
-      "visibleText": "Skip to the game\nNumber Motion Duet\nDemo\nPlay\nPrivacy\n\nA SHARED TABLE GAME\n\nPractice numbers with claps and steps\n\nFor caregivers and preschoolers who want numbers to involve both bodies.\n\nTry it with sample data\nStarts a ready-made clap round.\nPlay without an account.\nUse touch or keyboard.\nFree to play.\n\nTAKE TURNS\n\nTurn a number into claps or steps\n1\nChoose the motion\n\nThe adult picks claps or steps before the round.\n\n2\nCall the number\n\nThe adult taps a number and says it aloud.\n\n3\nMake the marks\n\nThe child moves. Both see one shape for each motion.\n\n✦\nA game, not a drill app\n\nThere are no videos, ads, accounts, cameras, or online scores. The adult stays part of the loop.\n\nStart a new game without sample rounds.\n\nA shared clap or step game for preschool number play.\nPrivacy\nTerms\nBuilt by Param Factory\n(external site)\nv1.0.0",
+      "visibleText": "Skip to the game\nNumber Motion Duet\nDemo\nPlay\nPrivacy\n\nA SHARED TABLE GAME\n\nPractice numbers with claps and steps\n\nFor caregivers and preschoolers who want numbers to involve both bodies.\n\nTry it with sample data\nStarts a ready-made clap round.\nPlay without an account.\nUse touch or keyboard.\nFree to play.\n\nTAKE TURNS\n\nTurn a number into claps or steps\n1\nChoose the motion\n\nThe adult picks claps or steps before the round.\n\n2\nCall the number\n\nThe adult taps a number and says it aloud.\n\n3\nMake the marks\n\nThe child moves. Both see one shape for each motion.\n\n✦\nA game, not a drill app\n\nThere are no videos, ads, accounts, cameras, or online scores.\n\nStart a new game without sample rounds.\n\nA shared clap or step game for preschool number play.\nPrivacy\nTerms\nBuilt by Param Factory\n(external site)\nv1.0.0",
       "actions": [
         {
           "text": "Number Motion Duet",
@@ -539,13 +614,13 @@
     "status": true,
     "cachesBefore": [
       {
-        "name": "number-motion-duet-ebc6493cd333",
+        "name": "number-motion-duet-d08e80af5d9a",
         "paths": [
           "/",
           "/apple-touch-icon.svg",
-          "/assets/index-ZUKjn4_B.js",
+          "/assets/index-Cj94H9rf.js",
           "/assets/notebook-hero-CdjKL61a.webp",
-          "/assets/style-rXKT0Oem.css",
+          "/assets/style-B_8tNubC.css",
           "/demo",
           "/favicon.svg",
           "/game",

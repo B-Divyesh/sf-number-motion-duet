@@ -1,29 +1,58 @@
-# Review 3 handoff — Number Motion Duet
+# Polish 3 handoff — Number Motion Duet
 
 ## Result
 
-Completed the requested adversarial first-read review without changing product code. The review is recorded in `.factory/review-3.md`.
+Released the zero-finding repair for candidate
+`08a27f783d0e863c7966a10085b6111238b9632a`.
 
-**Verdict: FAIL.** Four minor findings remain: one first-screen mobile layout gap, a forward-route focus/scroll gap, a metaphorical 404 H1, and one unlisted/unverifiable landing promise.
+- Repair commit: `3b562bcbe7afd71225d5465c9dbbb2e686ee276c`
+- Live URL: <https://number-motion-duet.sociobot.in>
+- Deployment: `swa deploy ./dist --env production --app-name sf-number-motion-duet`
 
-## Verification performed
+The repair puts every first-screen fact into the 390 px view, moves a new
+route to its visible H1 while restoring scroll on Back, makes both 404 H1s
+literal, and removes the untestable participation promise. The one-click,
+isolated `/demo` and `?demo=1` flows, banner, reset, Start for real path,
+claims registry, legal routes, metadata, true 404, privacy, and notebook visual
+identity remain intact.
 
-- Fresh live desktop and 390 px browser contexts at `https://number-motion-duet.sociobot.in`.
-- One-click demo, reset, start-real, storage-isolation, request-origin, and offline-reload checks.
-- Live Axe scans on `/`, `/demo`, `/game`, `/privacy`, `/terms`, and the 404: zero violations.
-- Clean clone: `npm ci` (0 vulnerabilities), each of the 11 exact claim commands in `.factory/claims.json`, `npm test` (22 passed), and `npm run build` (created `dist/index.html`).
-- Live route/link/status, metadata, focus, prior-finding, source, and copy audits.
-
-## How to reproduce
+## Run and verify
 
 ```sh
 npm ci
-npm test
+npm run typecheck
+npm run lint
 npm run build
+npm test
 ```
 
-Then open the live site at 390 × 844, scroll home to the footer, and use its Privacy link to reproduce F-3-2. See `.factory/review-3.md` for the complete findings and exact fixes.
+For the sample game, open `/demo` or `/?demo=1`. The live deployment was
+verified with `/opt/fleet/lib/verify-url.sh`, the checked-in Playwright + Axe
+audit, and Lighthouse.
+
+## Exact evidence
+
+- Fresh clone `/tmp/number-motion-duet-clean-9CrJWy`: 0 npm vulnerabilities;
+  all 11 exact claim commands from `.factory/claims.json` passed individually;
+  then typecheck, lint, build, and Playwright passed with 24 tests.
+- Final local/live SHA-256 pairs byte-match for `index.html`
+  (`9079318e…28a85ec5`), app JS (`2c0081da…c66c5b48`), app CSS
+  (`b4d63137…49a3a470`), and `sw.js` (`3d471f86…916f12703`).
+- Live [`evidence/qa-live.json`](evidence/qa-live.json): all five app routes
+  returned 200, the deliberate missing route returned 404, every scanned route
+  had one H1/main and zero Axe violations, and the demo/offline/privacy/mobile
+  flows passed with no external requests or browser errors. The expected
+  browser network message for the HTTP-404 navigation is recorded separately;
+  it is not a page error.
+- Live mobile first screen: [`evidence/polish-3-live-first-screen-mobile.png`](evidence/polish-3-live-first-screen-mobile.png).
+  All three facts end at 580 px in an 844 px viewport.
+- Live basic page audit and screenshots:
+  [`evidence/polish-3-verify-url`](evidence/polish-3-verify-url).
+- Live Lighthouse: [`evidence/polish-3-lighthouse-home.json`](evidence/polish-3-lighthouse-home.json)
+  reports 100/100/100/100 (performance/accessibility/best-practices/SEO),
+  FCP 0.8 s, LCP 1.2 s, CLS 0, TBT 0 ms.
 
 ## Known gaps
 
-The four review findings above are intentionally left unresolved because this was a review-only work order.
+None. There are no unresolved findings from the supplied review or earlier
+review, polish, and verification records.

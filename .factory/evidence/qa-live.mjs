@@ -5,6 +5,7 @@ import { writeFile } from 'node:fs/promises';
 const base = 'https://number-motion-duet.sociobot.in';
 const browser = await chromium.launch({ headless: true });
 const report = { generatedAt: new Date().toISOString(), base };
+function assert(condition, message) { if (!condition) throw new Error(message); }
 
 async function observe(page) {
   const consoleErrors = [];
@@ -19,12 +20,12 @@ async function observe(page) {
 {
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, serviceWorkers: 'block' });
   const routeResults = [];
-  for (const route of ['/', '/demo', '/game', '/privacy', '/terms']) {
+  for (const route of ['/', '/demo', '/game', '/privacy', '/terms', '/not-a-real-page']) {
     const page = await context.newPage();
     const observed = await observe(page);
     const response = await page.goto(base + route, { waitUntil: 'networkidle' });
     const axe = await new AxeBuilder({ page }).analyze();
-    routeResults.push({
+    const result = {
       route,
       status: response?.status(),
       title: await page.title(),
@@ -36,10 +37,76 @@ async function observe(page) {
       externalRequests: observed.requests.filter((r) => new URL(r.url).origin !== base),
       consoleErrors: observed.consoleErrors,
       pageErrors: observed.pageErrors
-    });
+    };
+    assert(result.status === (route === '/not-a-real-page' ? 404 : 200), `${route} returned ${result.status}`);
+    assert(result.h1.length === 1 && result.mainCount === 1, `${route} does not have one h1 and one main`);
+    assert(result.seriousCritical.length === 0, `${route} has serious Axe findings`);
+    const unexpectedConsoleErrors = route === '/not-a-real-page'
+      ? result.consoleErrors.filter((message) => !message.includes('Failed to load resource'))
+      : result.consoleErrors;
+    assert(unexpectedConsoleErrors.length === 0 && result.pageErrors.length === 0, `${route} has browser errors`);
+    if (route === '/not-a-real-page') assert(result.h1[0] === 'Page not found.', '404 heading is not literal');
+    routeResults.push(result);
     await page.close();
   }
   report.routes = routeResults;
+  await context.close();
+}
+
+{
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' });
+  const page = await context.newPage();
+  const observed = await observe(page);
+  await page.goto(base + '/', { waitUntil: 'networkidle' });
+  await page.screenshot({ path: '.factory/evidence/polish-3-live-first-screen-mobile.png' });
+  const firstScreen = await page.evaluate(() => {
+    const labels = ['Practice numbers with claps and steps', 'Try it with sample data', 'Play without an account.', 'Use touch or keyboard.', 'Free to play.'];
+    const elements = labels.map((label) => [...document.querySelectorAll('h1, a, li')].find((element) => element.textContent?.trim() === label));
+    return elements.map((element, index) => {
+      const box = element?.getBoundingClientRect();
+      return { label: labels[index], visible: Boolean(box && box.top >= 0 && box.bottom <= window.innerHeight), top: box?.top, bottom: box?.bottom };
+    });
+  });
+  assert(firstScreen.every((item) => item.visible), 'A required first-screen item is outside the 390px viewport');
+  const footerPrivacy = page.locator('footer').getByRole('link', { name: 'Privacy' });
+  await footerPrivacy.scrollIntoViewIfNeeded();
+  const homeScroll = await page.evaluate(() => window.scrollY);
+  assert(homeScroll > 0, 'Footer navigation did not start below the fold');
+  await footerPrivacy.click();
+  await page.waitForURL(base + '/privacy');
+  await page.waitForFunction(() => document.activeElement?.textContent?.trim() === 'Your game stays on this device');
+  const forwardRoute = await page.evaluate(() => {
+    const box = document.querySelector('h1')?.getBoundingClientRect();
+    return { scrollY: window.scrollY, top: box?.top, bottom: box?.bottom, viewport: window.innerHeight };
+  });
+  assert((forwardRoute.scrollY ?? Infinity) <= 1 && (forwardRoute.top ?? -1) >= 0 && (forwardRoute.bottom ?? Infinity) <= forwardRoute.viewport, 'Forward route focus is not visible at the destination');
+  await page.goBack();
+  await page.waitForURL(base + '/');
+  await page.waitForFunction((expected) => Math.abs(window.scrollY - expected) <= 1, homeScroll);
+  assert(observed.consoleErrors.length === 0 && observed.pageErrors.length === 0, 'Mobile first-read flow has browser errors');
+  report.polish3 = { firstScreen, forwardRoute, homeScroll, screenshot: '.factory/evidence/polish-3-live-first-screen-mobile.png', consoleErrors: observed.consoleErrors, pageErrors: observed.pageErrors };
+  await context.close();
+}
+
+{
+  const context = await browser.newContext({ serviceWorkers: 'block' });
+  const page = await context.newPage();
+  const observed = await observe(page);
+  await page.goto(base + '/?demo=1', { waitUntil: 'networkidle' });
+  const beforeReset = {
+    url: page.url(),
+    title: await page.title(),
+    banner: await page.getByText('Demo — sample data, nothing is saved to your game.').isVisible(),
+    reset: await page.getByRole('button', { name: 'Reset demo' }).isVisible(),
+    startReal: await page.getByRole('button', { name: 'Start for real' }).isVisible(),
+    rounds: await page.locator('.round-log li').allTextContents(),
+    action: await page.getByRole('button', { name: 'We did 4 claps' }).isVisible()
+  };
+  assert(beforeReset.url === `${base}/?demo=1` && beforeReset.title === 'Demo — Number Motion Duet' && beforeReset.banner && beforeReset.reset && beforeReset.startReal && beforeReset.action && beforeReset.rounds.join('|') === '3 steps|2 claps', 'Direct demo query did not open the isolated sample game');
+  await page.getByRole('button', { name: 'Reset demo' }).click();
+  assert((await page.locator('.round-log li').allTextContents()).join('|') === '3 steps|2 claps', 'Reset demo did not restore the sample');
+  assert(observed.consoleErrors.length === 0 && observed.pageErrors.length === 0, 'Direct demo query has browser errors');
+  report.demoQuery = { ...beforeReset, consoleErrors: observed.consoleErrors, pageErrors: observed.pageErrors };
   await context.close();
 }
 

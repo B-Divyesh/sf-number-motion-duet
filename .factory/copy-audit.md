@@ -1,6 +1,6 @@
 # Copy audit
 
-Audited 2026-08-28 after polish round 2. Every visitor-facing sentence is at
+Audited 2026-08-28 after polish round 3. Every visitor-facing sentence is at
 most 22 words. No banned plain-words terms appear. Test names, file paths, and
 commands are not visitor copy.
 
