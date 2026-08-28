@@ -1,0 +1,9 @@
+{
+  "asset": "notebook-hero.png",
+  "derived_output": "public/assets/notebook-hero.webp",
+  "created": "2026-08-28",
+  "tool": "/opt/fleet/lib/gen-image.sh",
+  "model": "factory-image deployment",
+  "prompt": "Top-down flat-lay of an open warm cream notebook with simple wood counting shapes, navy graphite lines and muted coral ochre leaf-green accents, soft window light, tactile paper, clean product illustration, no text no watermark no logo",
+  "license": "Original generated product asset; no third-party source material."
+}

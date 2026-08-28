@@ -1,0 +1,30 @@
+[
+  {
+    "id": "demo-isolated",
+    "claim": "Demo sample rounds stay separate from a real game",
+    "where": "Demo banner",
+    "test": "npm test -- --grep @claim:demo-isolated",
+    "sandbox": "Fresh browser context at /demo; complete a sample round, then leave demo."
+  },
+  {
+    "id": "keyboard",
+    "claim": "Use touch or keyboard",
+    "where": "Landing facts",
+    "test": "npm test -- --grep @claim:keyboard",
+    "sandbox": "Fresh browser context at /demo; use Enter and Space to select and confirm a quantity."
+  },
+  {
+    "id": "local-game",
+    "claim": "Play without an account and keep round history in this browser",
+    "where": "Landing facts and Privacy page",
+    "test": "npm test -- --grep @claim:local-game",
+    "sandbox": "Fresh browser context at /demo; finish a round and observe storage and all network requests."
+  },
+  {
+    "id": "offline-demo",
+    "claim": "Demo works offline after its first visit",
+    "where": "Demo offline status",
+    "test": "npm test -- --grep @claim:offline-demo",
+    "sandbox": "Fresh browser context at /demo; wait for the service worker, go offline, then reload /demo."
+  }
+]
