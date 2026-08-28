@@ -62,9 +62,20 @@ FCP **0.9 s**, LCP **0.9 s**, CLS **0**, and TBT **0 ms**.
 
 ## Deployment
 
-Static deployment is triggered by pushing the committed `main` branch to the
-configured GitHub remote. The post-push check verifies the deployed identity,
-404 response, and cache headers after the deployment workflow completes.
+Deployed production build from commit `2f4acbd` to the configured Azure Static
+Web App (`sf-number-motion-duet`) with:
+
+```sh
+swa deploy ./dist --env production
+```
+
+Azure confirmed the deployment at
+`https://thankful-grass-04fd20a10.7.azurestaticapps.net`; the custom production
+URL `https://number-motion-duet.sociobot.in` was then checked. Its `index.html`
+SHA-256 exactly matched `dist/index.html`; it served the content-hashed app
+asset and generated `number-motion-duet-62e11a15bcc5` service-worker cache.
+A missing route returned HTTP 404. `sw.js` retained the expected CSP,
+`Referrer-Policy`, and `X-Content-Type-Options` headers.
 
 ## Known limits
 
