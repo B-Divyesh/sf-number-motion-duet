@@ -18,7 +18,21 @@
     "claim": "Play without an account, keep round history in this browser, and send it nowhere",
     "where": "Landing facts and Privacy page",
     "test": "npm test -- --grep @claim:local-game",
-    "sandbox": "Fresh browser context at /demo; finish a round and observe storage and all network requests."
+    "sandbox": "Fresh browser context at /game; finish a four-clap round, reload, verify the saved round is still rendered and present in the real-game storage key, and verify all network requests are same-origin."
+  },
+  {
+    "id": "seeded-demo",
+    "claim": "The first-screen sample action opens a ready-made four-clap round",
+    "where": "Landing primary-action note",
+    "test": "npm test -- --grep @claim:seeded-demo",
+    "sandbox": "Fresh browser context at /; click Try it with sample data and verify /demo opens with the demo banner, two sample rounds, and the four-clap completion action ready."
+  },
+  {
+    "id": "shape-amount",
+    "claim": "One shape mark appears for each completed motion",
+    "where": "Landing How it works and game round history",
+    "test": "npm test -- --grep @claim:shape-amount",
+    "sandbox": "Fresh browser context at /demo; choose seven, complete the round, and verify the labelled result contains exactly seven numbered shape marks."
   },
   {
     "id": "offline-demo",

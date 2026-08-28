@@ -49,14 +49,41 @@ test('@claim:keyboard Use touch or keyboard', async ({ page }) => {
   await expect(page.getByRole('img', { name: '5 shape marks' })).toBeVisible();
 });
 
-test('@claim:local-game Play without an account and keep round history in this browser', async ({ page }) => {
+test('@claim:local-game Play without an account, keep round history in this browser, and send it nowhere', async ({ page }) => {
   const requests: string[] = [];
   page.on('request', (request) => requests.push(request.url()));
-  await page.goto('/demo');
+  await page.goto('/game');
+  await page.getByRole('button', { name: '4', exact: true }).click();
   await page.getByRole('button', { name: 'We did 4 claps' }).click();
-  await expect(page.getByText('4 claps', { exact: true }).first()).toBeVisible();
+  await expect(page.getByText('1 round marked')).toBeVisible();
+  await expect(page.locator('.round-log li')).toHaveText(['4 claps']);
+  await page.reload();
+  await expect(page.getByText('1 round marked')).toBeVisible();
+  await expect(page.locator('.round-log li')).toHaveText(['4 claps']);
+  const savedRounds = await page.evaluate(() => JSON.parse(localStorage.getItem('number-motion-duet:session') ?? '{}').rounds);
+  expect(savedRounds).toEqual([{ count: 4, motion: 'claps' }]);
   await expect(page.locator('input[type="email"], input[type="password"], form')).toHaveCount(0);
   expect(requests.every((url) => new URL(url).origin === 'http://127.0.0.1:4173')).toBeTruthy();
+});
+
+test('@claim:seeded-demo The first-screen sample action opens a ready-made four-clap round', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('link', { name: 'Try it with sample data' }).click();
+  await expect(page).toHaveURL(/\/demo$/);
+  await expect(page.getByText('Demo — sample data, nothing is saved to your game.')).toBeVisible();
+  await expect(page.getByText('2 rounds marked')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'We did 4 claps' })).toBeVisible();
+  await expect(page.locator('.round-log li')).toHaveText(['3 steps', '2 claps']);
+});
+
+test('@claim:shape-amount One shape mark appears for each completed motion', async ({ page }) => {
+  await page.goto('/demo');
+  await page.getByRole('button', { name: '7', exact: true }).click();
+  await page.getByRole('button', { name: 'We did 7 claps' }).click();
+  const marks = page.getByRole('img', { name: '7 shape marks' });
+  await expect(marks).toBeVisible();
+  await expect(marks.locator('.shape')).toHaveCount(7);
+  await expect(marks.locator('.shape')).toHaveText(['1', '2', '3', '4', '5', '6', '7']);
 });
 
 test('@claim:offline-demo Demo works offline after its first visit', async ({ page, context }) => {
