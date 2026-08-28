@@ -1,0 +1,562 @@
+{
+  "generatedAt": "2026-08-28T14:58:02.633Z",
+  "base": "https://number-motion-duet.sociobot.in",
+  "routes": [
+    {
+      "route": "/",
+      "status": 200,
+      "title": "Number Motion Duet — Move together to learn numbers",
+      "lang": "en",
+      "h1": [
+        "Make number play a shared movement game"
+      ],
+      "mainCount": 1,
+      "seriousCritical": [],
+      "allAxeViolations": [],
+      "externalRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "route": "/demo",
+      "status": 200,
+      "title": "Demo — Number Motion Duet",
+      "lang": "en",
+      "h1": [
+        "Call a number. Move together."
+      ],
+      "mainCount": 1,
+      "seriousCritical": [],
+      "allAxeViolations": [],
+      "externalRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "route": "/game",
+      "status": 200,
+      "title": "Play — Number Motion Duet",
+      "lang": "en",
+      "h1": [
+        "Call a number. Move together."
+      ],
+      "mainCount": 1,
+      "seriousCritical": [],
+      "allAxeViolations": [],
+      "externalRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "route": "/privacy",
+      "status": 200,
+      "title": "Privacy — Number Motion Duet",
+      "lang": "en",
+      "h1": [
+        "Your game stays on this device"
+      ],
+      "mainCount": 1,
+      "seriousCritical": [],
+      "allAxeViolations": [],
+      "externalRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "route": "/terms",
+      "status": 200,
+      "title": "Terms — Number Motion Duet",
+      "lang": "en",
+      "h1": [
+        "Simple terms for a free game"
+      ],
+      "mainCount": 1,
+      "seriousCritical": [],
+      "allAxeViolations": [],
+      "externalRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    }
+  ],
+  "flow": {
+    "firstScreen": {
+      "h1": "Make number play a shared movement game",
+      "visibleText": "Skip to the game\nNumber Motion Duet\nDemo\nPlay\nPrivacy\n\nA SHARED TABLE GAME\n\nMake number play a shared movement game\n\nFor caregivers and preschoolers who want numbers to involve both bodies.\n\nTry it with sample data\nStarts a ready-made clap round.\nPlay without an account.\nUse touch or keyboard.\nFree to play.\n\nTAKE TURNS\n\nMake one number a whole-body idea\n1\nChoose the motion\n\nThe adult picks claps or steps before the round.\n\n2\nCall the number\n\nThe adult taps a number and says it aloud.\n\n3\nMake the marks\n\nThe child moves. Both see one shape for each motion.\n\n✦\nA game, not a drill app\n\nThere are no videos, ads, accounts, cameras, or online scores. The adult stays part of the loop.\n\nStart a new game without sample rounds.\n\nA shared clap or step game for preschool number play.\nPrivacy\nTerms\nBuilt by Param Factory\n(external site)\nv1.0.0",
+      "actions": [
+        {
+          "text": "Number Motion Duet",
+          "href": "https://number-motion-duet.sociobot.in/"
+        },
+        {
+          "text": "Demo",
+          "href": "https://number-motion-duet.sociobot.in/demo"
+        },
+        {
+          "text": "Play",
+          "href": "https://number-motion-duet.sociobot.in/game"
+        },
+        {
+          "text": "Privacy",
+          "href": "https://number-motion-duet.sociobot.in/privacy"
+        },
+        {
+          "text": "Try it with sample data",
+          "href": "https://number-motion-duet.sociobot.in/demo"
+        }
+      ]
+    },
+    "initialDemo": {
+      "banner": true,
+      "roundCount": 2,
+      "log": [
+        "3 steps",
+        "2 claps"
+      ],
+      "storage": {
+        "demo": null,
+        "real": null
+      }
+    },
+    "boundaryTen": {
+      "marks": 10,
+      "confirmation": true,
+      "roundCount": 3
+    },
+    "wrappedAfterTen": true,
+    "boundaryOne": {
+      "marks": 1,
+      "singularConfirmation": true
+    },
+    "reset": {
+      "calledFourClaps": true,
+      "log": [
+        "3 steps",
+        "2 claps"
+      ]
+    },
+    "realAfterDemo": {
+      "url": "https://number-motion-duet.sociobot.in/game",
+      "bannerCount": 0,
+      "roundCountText": "0 rounds marked",
+      "empty": true,
+      "storage": {
+        "demo": null,
+        "real": null
+      }
+    },
+    "externalRequests": [],
+    "consoleErrors": [],
+    "pageErrors": []
+  },
+  "corruptStorage": {
+    "message": "Saved rounds could not be read, so a new game started.",
+    "empty": true,
+    "roundCount": 0,
+    "storedValue": null
+  },
+  "keyboard": {
+    "sequence": [
+      {
+        "tag": "A",
+        "text": "Skip to the game",
+        "ariaLabel": null,
+        "outline": "rgb(104, 76, 128) solid 4px",
+        "box": [
+          165,
+          44
+        ]
+      },
+      {
+        "tag": "A",
+        "text": "Number Motion Duet",
+        "ariaLabel": null,
+        "outline": "rgb(104, 76, 128) solid 4px",
+        "box": [
+          198,
+          44
+        ]
+      },
+      {
+        "tag": "A",
+        "text": "Demo",
+        "ariaLabel": null,
+        "outline": "rgb(104, 76, 128) solid 4px",
+        "box": [
+          57,
+          44
+        ]
+      },
+      {
+        "tag": "A",
+        "text": "Play",
+        "ariaLabel": null,
+        "outline": "rgb(104, 76, 128) solid 4px",
+        "box": [
+          44,
+          44
+        ]
+      },
+      {
+        "tag": "A",
+        "text": "Privacy",
+        "ariaLabel": null,
+        "outline": "rgb(104, 76, 128) solid 4px",
+        "box": [
+          62,
+          44
+        ]
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Reset demo",
+        "ariaLabel": null,
+        "outline": "rgb(104, 76, 128) solid 4px",
+        "box": [
+          123,
+          35
+        ]
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Start for real",
+        "ariaLabel": null,
+        "outline": "rgb(104, 76, 128) solid 4px",
+        "box": [
+          134,
+          35
+        ]
+      },
+      {
+        "tag": "BUTTON",
+        "text": "👏 Claps",
+        "ariaLabel": null,
+        "outline": "rgb(104, 76, 128) solid 4px",
+        "box": [
+          107,
+          48
+        ]
+      },
+      {
+        "tag": "BUTTON",
+        "text": "👣 Steps",
+        "ariaLabel": null,
+        "outline": "rgb(104, 76, 128) solid 4px",
+        "box": [
+          109,
+          48
+        ]
+      },
+      {
+        "tag": "BUTTON",
+        "text": "1",
+        "ariaLabel": null,
+        "outline": "rgb(104, 76, 128) solid 4px",
+        "box": [
+          136,
+          54
+        ]
+      },
+      {
+        "tag": "BUTTON",
+        "text": "2",
+        "ariaLabel": null,
+        "outline": "rgb(104, 76, 128) solid 4px",
+        "box": [
+          136,
+          54
+        ]
+      },
+      {
+        "tag": "BUTTON",
+        "text": "3",
+        "ariaLabel": null,
+        "outline": "rgb(104, 76, 128) solid 4px",
+        "box": [
+          136,
+          54
+        ]
+      },
+      {
+        "tag": "BUTTON",
+        "text": "4",
+        "ariaLabel": null,
+        "outline": "rgb(104, 76, 128) solid 4px",
+        "box": [
+          136,
+          54
+        ]
+      },
+      {
+        "tag": "BUTTON",
+        "text": "5",
+        "ariaLabel": null,
+        "outline": "rgb(104, 76, 128) solid 4px",
+        "box": [
+          136,
+          54
+        ]
+      },
+      {
+        "tag": "BUTTON",
+        "text": "6",
+        "ariaLabel": null,
+        "outline": "rgb(104, 76, 128) solid 4px",
+        "box": [
+          136,
+          54
+        ]
+      },
+      {
+        "tag": "BUTTON",
+        "text": "7",
+        "ariaLabel": null,
+        "outline": "rgb(104, 76, 128) solid 4px",
+        "box": [
+          136,
+          54
+        ]
+      },
+      {
+        "tag": "BUTTON",
+        "text": "8",
+        "ariaLabel": null,
+        "outline": "rgb(104, 76, 128) solid 4px",
+        "box": [
+          136,
+          54
+        ]
+      },
+      {
+        "tag": "BUTTON",
+        "text": "9",
+        "ariaLabel": null,
+        "outline": "rgb(104, 76, 128) solid 4px",
+        "box": [
+          136,
+          54
+        ]
+      },
+      {
+        "tag": "BUTTON",
+        "text": "10",
+        "ariaLabel": null,
+        "outline": "rgb(104, 76, 128) solid 4px",
+        "box": [
+          136,
+          54
+        ]
+      },
+      {
+        "tag": "BUTTON",
+        "text": "We did 4 claps",
+        "ariaLabel": null,
+        "outline": "rgb(104, 76, 128) solid 4px",
+        "box": [
+          716,
+          48
+        ]
+      }
+    ],
+    "focusAfterSelection": {
+      "tag": "BODY",
+      "text": "Skip to the game\n  Number Motion Duet\n  DemoPlayPrivacy\n  Demo — sample data, no"
+    },
+    "keyboardResult": true,
+    "routeFocus": {
+      "url": "https://number-motion-duet.sociobot.in/privacy",
+      "tag": "H1",
+      "text": "Your game stays on this device",
+      "tabindex": "-1"
+    },
+    "backFocus": {
+      "tag": "H1",
+      "text": "Call a number. Move together."
+    }
+  },
+  "storageWriteFailure": {
+    "status": "",
+    "confirmationCount": 0,
+    "roundCount": "0 rounds marked"
+  },
+  "storageDeleteFailure": {
+    "url": "https://number-motion-duet.sociobot.in/demo",
+    "pageErrors": [
+      "Access denied"
+    ]
+  },
+  "mobile": {
+    "measurements": {
+      "viewport": 390,
+      "scrollWidth": 390,
+      "touchTargets": [
+        {
+          "text": "Skip to the game",
+          "width": 165,
+          "height": 44
+        },
+        {
+          "text": "Number Motion Duet",
+          "width": 198,
+          "height": 44
+        },
+        {
+          "text": "Demo",
+          "width": 52,
+          "height": 44
+        },
+        {
+          "text": "Play",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "text": "Privacy",
+          "width": 57,
+          "height": 44
+        },
+        {
+          "text": "Reset demo",
+          "width": 123,
+          "height": 35
+        },
+        {
+          "text": "Start for real",
+          "width": 134,
+          "height": 35
+        },
+        {
+          "text": "👏 Claps",
+          "width": 107,
+          "height": 48
+        },
+        {
+          "text": "👣 Steps",
+          "width": 109,
+          "height": 48
+        },
+        {
+          "text": "1",
+          "width": 56,
+          "height": 54
+        },
+        {
+          "text": "2",
+          "width": 56,
+          "height": 54
+        },
+        {
+          "text": "3",
+          "width": 56,
+          "height": 54
+        },
+        {
+          "text": "4",
+          "width": 56,
+          "height": 54
+        },
+        {
+          "text": "5",
+          "width": 56,
+          "height": 54
+        },
+        {
+          "text": "6",
+          "width": 56,
+          "height": 54
+        },
+        {
+          "text": "7",
+          "width": 56,
+          "height": 54
+        },
+        {
+          "text": "8",
+          "width": 56,
+          "height": 54
+        },
+        {
+          "text": "9",
+          "width": 56,
+          "height": 54
+        },
+        {
+          "text": "10",
+          "width": 56,
+          "height": 54
+        },
+        {
+          "text": "We did 4 claps",
+          "width": 314,
+          "height": 48
+        },
+        {
+          "text": "Privacy",
+          "width": 52,
+          "height": 44
+        },
+        {
+          "text": "Terms",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "text": "Built by Param Factory (external site)",
+          "width": 162,
+          "height": 44
+        }
+      ],
+      "bodyFontSize": "16px"
+    },
+    "tooSmall": [
+      {
+        "text": "Reset demo",
+        "width": 123,
+        "height": 35
+      },
+      {
+        "text": "Start for real",
+        "width": 134,
+        "height": 35
+      }
+    ],
+    "text200": {
+      "viewport": 390,
+      "scrollWidth": 619,
+      "h1Visible": true,
+      "confirmVisible": true
+    },
+    "seriousCritical": [],
+    "consoleErrors": [],
+    "pageErrors": []
+  },
+  "reducedMotion": {
+    "matches": true,
+    "animationName": "none",
+    "animationDuration": "1e-05s",
+    "transitionDuration": "1e-05s"
+  },
+  "offline": {
+    "heading": true,
+    "status": true,
+    "cachesBefore": [
+      {
+        "name": "number-motion-duet-62e11a15bcc5",
+        "paths": [
+          "/",
+          "/apple-touch-icon.svg",
+          "/assets/index-CUvO2bNl.js",
+          "/assets/notebook-hero-CdjKL61a.webp",
+          "/assets/style-C6wM4nEX.css",
+          "/demo",
+          "/favicon.svg",
+          "/game",
+          "/index.html",
+          "/privacy",
+          "/terms"
+        ]
+      }
+    ],
+    "consoleErrors": [],
+    "pageErrors": []
+  }
+}

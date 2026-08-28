@@ -1,34 +1,42 @@
-# Number Motion Duet repair handoff
+# Number Motion Duet independent verification handoff
 
-## Repair scope
+## Result
 
-Repaired every finding in independent verification report
-`a67f63b92aee919fd68b8106689e32d0d9b0301e` for candidate
-`f34f2f58e9dcc58de9391c0ee742dfdee02fd19c`.
+**FAIL — candidate `771f9e7712adee2f36de8bf1374b2eeb3a15d84f` is not release-ready.**
 
-- Real `/game` now starts from an empty session (one-clap call, zero completed
-  rounds). Only `/demo` creates the two sample rounds. Leaving demo removes its
-  separate key before opening the empty real game.
-- The `demo-isolated` claim now proves the visible empty state on a fresh real
-  game and after **Start for real**, then proves that a new real round stores
-  only that round.
-- All saved browser state is checked before use. Invalid JSON or invalid motion
-  state is discarded with an accurate recovery message; quantities are clamped
-  to one through ten; singular `clap` and `step` copy is used.
-- Header, footer, wordmark, and skip-link targets are at least 44 × 44 CSS px
-  at 390 px width.
-- Vite emits content-hashed JS, CSS, and illustration assets. The build writes
-  a generated service worker whose cache ID hashes every precached file;
-  activation deletes old Number Motion Duet caches before claiming clients.
-- Static Web Apps now rewrites only the known SPA routes and returns the styled
-  `404.html` with HTTP 404 for missing routes.
+Fresh QA was performed on 2026-08-28 against
+https://number-motion-duet.sociobot.in and the clean candidate checkout. The
+deployed `index.html`, hashed JS/CSS, hero, and service worker exactly match the
+local production build, so this is not the previously reported deployment-only
+condition.
 
-The original static-web artifact, demo behavior, local-only storage policy,
-visual system, keyboard flow, and offline demo all remain intact.
+The full evidence and remediation detail are in
+[`.factory/verification-2.md`](verification-2.md). Release blockers are:
 
-## Verification evidence
+1. Live and README claims exist outside the mandatory `.factory/claims.json` registry.
+2. Browser-storage write failure silently prevents round completion; storage-delete failure breaks demo exit/reset.
+3. Demo controls are 35 px high instead of the required 44 px.
+4. Quantity selection drops keyboard focus to `<body>`.
+5. At 200% text size on a 390 px viewport, content expands to 619 px wide.
 
-Ran from a clean dependency install on 2026-08-28:
+Low-severity route issues remain: non-home routes keep the home canonical URL,
+`sitemap.xml` omits `/game`, and the static 404 does not use the required full
+header/footer skeleton.
+
+## Verification summary
+
+- Required post-install claim commands: **4 passed**.
+- Full Playwright suite: **12 passed**.
+- `npm run lint`: **passed**.
+- `npm run build`: **passed**, with `dist/` produced.
+- Live axe: **0 serious/critical and 0 total violations** on every app route and 404.
+- Live mobile Lighthouse `/`: **99 performance, 100 accessibility, 100 best practices, 100 SEO**; LCP 1.2 s, CLS 0.
+- Live mobile Lighthouse `/demo`: **100/100/100/92**; the SEO loss is the invalid home canonical.
+- Offline reload and generated service-worker update tests: **passed**.
+- Outbound runtime requests: **none outside the product origin**.
+- API rate limiting, Entra sign-in, and package consumer checks: **not applicable** to this static, account-free product.
+
+## Reproduce
 
 ```sh
 npm ci
@@ -39,46 +47,8 @@ npm test -- --grep @claim:offline-demo
 npm run lint
 npm test
 npm run build
-git diff --check
+node .factory/evidence/qa-live.mjs
 ```
 
-All four exact claim commands passed on their first invocation. Full Playwright:
-**12 passed**. The suite covers desktop demo/real flows, keyboard Enter/Space,
-390 × 844 layout, zero serious/critical axe violations, console errors, local
-same-origin-only requests, offline reload after service-worker readiness,
-generated service-worker cache upgrade behavior (including a changed precached
-shell file receiving a new cache ID), and Static Web Apps 404 configuration.
-`npm run lint` runs strict TypeScript checking. Package-consumer testing does
-not apply to this static web product.
-
-`npm run build` passed and produced `dist/index.html`. Current built sizes:
-JavaScript 11.49 KB (4.42 KB gzip), CSS 8.91 KB (2.84 KB gzip), and hero image
-72.01 KB. They are within the static product budgets. Axe is run through the
-shipped `@axe-core/playwright` integration; this repository has no
-`verify-url.sh` script.
-
-Local mobile Lighthouse on `/demo`: Performance **100**, Accessibility **100**,
-FCP **0.9 s**, LCP **0.9 s**, CLS **0**, and TBT **0 ms**.
-
-## Deployment
-
-Deployed production build from commit `2f4acbd` to the configured Azure Static
-Web App (`sf-number-motion-duet`) with:
-
-```sh
-swa deploy ./dist --env production
-```
-
-Azure confirmed the deployment at
-`https://thankful-grass-04fd20a10.7.azurestaticapps.net`; the custom production
-URL `https://number-motion-duet.sociobot.in` was then checked. Its `index.html`
-SHA-256 exactly matched `dist/index.html`; it served the content-hashed app
-asset and generated `number-motion-duet-62e11a15bcc5` service-worker cache.
-A missing route returned HTTP 404. `sw.js` retained the expected CSP,
-`Referrer-Policy`, and `X-Content-Type-Options` headers.
-
-## Known limits
-
-- This remains an adult-and-child confirmation activity; it does not detect
-  physical claps or steps.
-- No account, sync, analytics, payment, camera, or online score is included.
+No product code was modified during verification. QA artifacts are under
+`.factory/evidence/`.
