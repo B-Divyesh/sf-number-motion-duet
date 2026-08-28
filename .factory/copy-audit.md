@@ -27,7 +27,6 @@ commands are not visitor copy.
 | Both see one shape for each motion. | 7 | Pass |
 | A game, not a drill app | 6 | Pass |
 | There are no videos, ads, accounts, cameras, or online scores. | 10 | Pass |
-| The adult stays part of the loop. | 7 | Pass |
 | Start a new game without sample rounds. | 7 | Pass |
 | A shared clap or step game for preschool number play. | 10 | Pass |
 | Privacy | 1 | Pass |

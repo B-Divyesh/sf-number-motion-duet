@@ -81,7 +81,27 @@ function removeSession(storageKey: string, replacement: Session | null, failureM
   }
 }
 function escapeHtml(value: string) { return value.replace(/[&<>"]/g, (character) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[character]!)); }
-function nav(path: string) { history.pushState({}, '', path); render(true); }
+type HistoryPosition = { scrollY?: number };
+function historyPosition(): HistoryPosition {
+  return history.state && typeof history.state === 'object' ? history.state as HistoryPosition : {};
+}
+function saveScrollPosition() {
+  history.replaceState({ ...historyPosition(), scrollY: Math.max(0, Math.round(window.scrollY)) }, '', location.href);
+}
+function scrollToPosition(top: number) {
+  // Route changes need an immediate destination so the focused heading is
+  // already visible, regardless of a browser's current scroll behavior.
+  const previous = document.documentElement.style.scrollBehavior;
+  document.documentElement.style.scrollBehavior = 'auto';
+  window.scrollTo(0, Math.max(0, top));
+  document.documentElement.style.scrollBehavior = previous;
+}
+function nav(path: string) {
+  saveScrollPosition();
+  history.pushState({ scrollY: 0 }, '', path);
+  scrollToPosition(0);
+  render(true);
+}
 function active(path: string) { return location.pathname === path ? ' aria-current="page"' : ''; }
 function layout(content: string) {
   return `<a class="skip" href="#main">Skip to the game</a>
@@ -94,7 +114,7 @@ function layout(content: string) {
 function landing() {
   return `<section class="hero" aria-labelledby="home-title"><div><p class="eyebrow">A shared table game</p><h1 id="home-title">Practice numbers with claps and steps</h1><p class="lead">For caregivers and preschoolers who want numbers to involve both bodies.</p><div class="actions"><a class="button primary" href="/demo" data-link>Try it with sample data</a><span class="action-note">Starts a ready-made clap round.</span></div><ul class="facts"><li>Play without an account.</li><li>Use touch or keyboard.</li><li>Free to play.</li></ul></div><img class="hero-art" src="${heroArt}" width="1200" height="800" fetchpriority="high" decoding="async" alt="An open notebook with wooden circle, triangle, square, star, and heart counting pieces." /></section>
   <section class="section" aria-labelledby="how-title"><p class="eyebrow">Take turns</p><h2 id="how-title">Turn a number into claps or steps</h2><div class="steps"><article class="step"><span class="step-number">1</span><h3>Choose the motion</h3><p>The adult picks claps or steps before the round.</p></article><article class="step"><span class="step-number">2</span><h3>Call the number</h3><p>The adult taps a number and says it aloud.</p></article><article class="step"><span class="step-number">3</span><h3>Make the marks</h3><p>The child moves. Both see one shape for each motion.</p></article></div></section>
-  <section class="section plain-note" aria-labelledby="privacy-note"><span aria-hidden="true">✦</span><div><h2 id="privacy-note">A game, not a drill app</h2><p>There are no videos, ads, accounts, cameras, or online scores. The adult stays part of the loop.</p><p><a href="/game" data-link>Start a new game without sample rounds.</a></p></div></section>`;
+  <section class="section plain-note" aria-labelledby="privacy-note"><span aria-hidden="true">✦</span><div><h2 id="privacy-note">A game, not a drill app</h2><p>There are no videos, ads, accounts, cameras, or online scores.</p><p><a href="/game" data-link>Start a new game without sample rounds.</a></p></div></section>`;
 }
 function demoBanner() { return `<aside class="demo-banner" aria-label="Demo controls"><span><strong>Demo</strong> — sample data, nothing is saved to your game.</span><span><button class="text-button" type="button" data-action="reset-demo">Reset demo</button><button class="text-button" type="button" data-action="start-real">Start for real</button></span></aside>`; }
 function shapes(count: number) { return Array.from({ length: count }, (_, index) => `<span class="shape" aria-hidden="true">${index + 1}</span>`).join(''); }
@@ -114,7 +134,7 @@ function legal(kind: 'privacy' | 'terms') {
   const privacy = kind === 'privacy';
   return `<article class="legal"><p class="eyebrow">Number Motion Duet</p><h1>${privacy ? 'Your game stays on this device' : 'Simple terms for a free game'}</h1>${privacy ? `<h2>What this site stores</h2><p>Your completed rounds stay in this browser. The demo uses a separate browser storage area.</p><h2>What this site does not collect</h2><p>We do not ask for names, email addresses, photos, locations, or child details.</p><h2>Network use</h2><p>The game does not send your round history anywhere. Your browser may request this site’s files to load the page.</p><h2>Delete your rounds</h2><p>Clear this site’s browser data to remove saved rounds. Reset demo only removes sample rounds.</p>` : `<h2>Use with an adult</h2><p>This free activity is for caregivers and children to use together. Please make movement choices that fit your space.</p><h2>No promises about learning</h2><p>The game is a practice activity. It does not assess a child or replace professional advice.</p><h2>Service changes</h2><p>We may improve or stop this free site. These terms do not give either side extra rights.</p><h2>Contact</h2><p>Questions about the product can be sent to the Param Factory.</p>`}</article>`;
 }
-function notFound() { return `<section class="not-found"><p class="eyebrow">Page not found</p><h1>That page has wandered off.</h1><p>Try the shared number game from the beginning.</p><a class="button primary" href="/" data-link>Go to the home page</a></section>`; }
+function notFound() { return `<section class="not-found"><p class="eyebrow">Notebook check</p><h1>Page not found.</h1><p>Try the shared number game from the beginning.</p><a class="button primary" href="/" data-link>Go to the home page</a></section>`; }
 function page() { const path = location.pathname; if (isDemo()) return game(); if (path === '/') return landing(); if (path === '/game') return game(); if (path === '/privacy') return legal('privacy'); if (path === '/terms') return legal('terms'); return notFound(); }
 function routeName() { if (isDemo()) return 'Demo game'; if (location.pathname === '/game') return 'Game'; if (location.pathname === '/privacy') return 'Privacy'; if (location.pathname === '/terms') return 'Terms'; if (location.pathname === '/') return 'Home'; return 'Page not found'; }
 function setMeta(selector: string, value: string) {
@@ -146,7 +166,9 @@ function action(name: string) {
   if (name === 'confirm' && !session.confirmed) { status = ''; session.rounds.push({ count: session.count, motion: session.motion }); session.confirmed = true; saveSession(session); render(false, '[data-action="next"]'); return; }
   if (name === 'next') { status = ''; session.count = (session.count % 10) + 1; session.confirmed = false; saveSession(session); render(false, `[data-count="${session.count}"]`); }
 }
-window.addEventListener('popstate', () => { status = ''; render(true); });
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+if (typeof historyPosition().scrollY !== 'number') saveScrollPosition();
+window.addEventListener('popstate', (event) => { status = ''; render(true); scrollToPosition((event.state as HistoryPosition | null)?.scrollY ?? 0); });
 window.addEventListener('online', () => { online = true; render(); });
 window.addEventListener('offline', () => { online = false; render(); });
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => { /* Offline support is optional if registration fails. */ });

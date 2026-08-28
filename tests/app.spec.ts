@@ -87,6 +87,16 @@ test('uses direct wording for the landing job and turn-taking instructions', asy
   await expect(page.getByRole('heading', { level: 2, name: 'Turn a number into claps or steps' })).toBeVisible();
 });
 
+test('shows the complete first-screen action and facts on a 390px phone', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await expect(page.getByRole('heading', { level: 1, name: 'Practice numbers with claps and steps' })).toBeInViewport();
+  await expect(page.getByRole('link', { name: 'Try it with sample data' })).toBeInViewport();
+  for (const fact of ['Play without an account.', 'Use touch or keyboard.', 'Free to play.']) {
+    await expect(page.getByText(fact, { exact: true })).toBeInViewport();
+  }
+});
+
 test('@claim:shape-amount One shape mark appears for each completed motion', async ({ page }) => {
   await page.goto('/demo');
   await page.getByRole('button', { name: '7', exact: true }).click();
@@ -133,6 +143,28 @@ test('routes, title, and reset control work', async ({ page }) => {
   await page.getByRole('link', { name: 'Privacy' }).first().click();
   await expect(page).toHaveTitle('Privacy — Number Motion Duet');
   await expect(page.getByRole('heading', { name: 'Your game stays on this device' })).toBeVisible();
+});
+
+test('forward footer navigation brings the destination heading into view', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  const footerPrivacy = page.locator('footer').getByRole('link', { name: 'Privacy' });
+  await footerPrivacy.scrollIntoViewIfNeeded();
+  const homeScroll = await page.evaluate(() => window.scrollY);
+  expect(homeScroll).toBeGreaterThan(0);
+  await footerPrivacy.click();
+  const heading = page.getByRole('heading', { level: 1, name: 'Your game stays on this device' });
+  await expect(heading).toBeFocused();
+  const destination = await page.evaluate(() => {
+    const box = document.querySelector('h1')!.getBoundingClientRect();
+    return { scrollY: window.scrollY, top: box.top, bottom: box.bottom, viewport: window.innerHeight };
+  });
+  expect(destination.scrollY).toBeLessThanOrEqual(1);
+  expect(destination.top).toBeGreaterThanOrEqual(0);
+  expect(destination.bottom).toBeLessThanOrEqual(destination.viewport);
+  await page.goBack();
+  await expect(page).toHaveURL(/\/$/);
+  await page.waitForFunction((expectedScroll) => Math.abs(window.scrollY - expectedScroll) <= 1, homeScroll);
 });
 
 test('fits a 390px phone at default and 200% text size without console errors', async ({ page }) => {
@@ -323,7 +355,7 @@ test('Static Web Apps has a real styled 404 response override', async () => {
   expect(config.responseOverrides?.['404']).toEqual({ rewrite: '/404.html', statusCode: 404 });
   const page404 = await readFile('public/404.html', 'utf8');
   expect(page404).toContain('<main id="main"');
-  expect(page404).toContain('<h1>That page has wandered off.</h1>');
+  expect(page404).toContain('<h1>Page not found.</h1>');
   expect(page404).toContain('aria-label="Main navigation"');
   expect(page404).toContain('Built by Param Factory');
   expect(page404).toContain('href="/terms"');
