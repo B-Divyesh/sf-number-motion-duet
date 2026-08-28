@@ -83,9 +83,23 @@ the static `dist/` directory for Azure Static Web Apps.
 
 ## Deployment
 
-The repair is ready in `dist/` for the configured static deployment. Live
-deployment identity and response-header evidence will be recorded after the
-deploy step.
+Deployed `dist/` to Azure Static Web Apps on 2026-08-28:
+
+- URL: `https://number-motion-duet.sociobot.in`
+- Azure deployment ID: `45415cd4-14c7-4d77-9651-7bf48aa835e7`
+- The live `/`, `/demo`, `/game`, `/privacy`, and `/terms` return 200; a
+  deliberate missing URL returns 404.
+- Local and live SHA-256 values match exactly for `index.html`, the hashed JS,
+  hashed CSS, hero WebP, and `sw.js`. The deployed JS is
+  `assets/index-DGGN94E8.js`; CSS is `assets/style-rXKT0Oem.css`.
+- Live root headers include HSTS, `X-Content-Type-Options: nosniff`,
+  `Referrer-Policy: strict-origin-when-cross-origin`, and the configured
+  same-origin CSP. The hashed JS is served with one-year immutable caching.
+- A live 390 px browser audit found no console errors or serious/critical Axe
+  violations across all app routes and the HTTP 404; each app route has one
+  main landmark and one h1. The live `/demo` canonical is `/demo`, both demo
+  controls are 44 px high, number five retains focus after Enter, and 200% text
+  remains at a 390 px document width with no off-screen content.
 
 ## Known gaps
 
