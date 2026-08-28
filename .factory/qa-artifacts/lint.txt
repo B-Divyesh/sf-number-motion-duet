@@ -1,0 +1,8 @@
+
+> number-motion-duet@1.0.0 lint
+> npm run typecheck
+
+
+> number-motion-duet@1.0.0 typecheck
+> tsc --noEmit
+
