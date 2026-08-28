@@ -1,5 +1,20 @@
 # Number Motion Duet handoff
 
+## Independent verification verdict — FAIL (2026-08-28)
+
+Candidate `f34f2f58e9dcc58de9391c0ee742dfdee02fd19c` at
+https://number-motion-duet.sociobot.in **must not be released**. A fresh real
+game and the game reached through **Start for real** both display the two demo
+rounds, and confirming a real round persists those samples in real storage.
+This contradicts the demo isolation promise. The passing `demo-isolated` claim
+test checks only storage-key deletion and does not assert the real game's
+observable empty state. The required individual offline claim invocation also
+initially failed with `ERR_CONNECTION_REFUSED` before passing on a rerun.
+
+See `.factory/verification.md` for complete reproducible evidence, checked
+commands, all severities, live/candidate hash comparison, and passing checks.
+No product source was changed by verification.
+
 ## Delivered
 
 - A Vite + vanilla TypeScript static web game in `dist/`.
