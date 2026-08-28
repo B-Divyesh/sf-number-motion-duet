@@ -5,13 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -p tsconfig.json && vite build",
+    "build": "tsc -p tsconfig.json && vite build && node scripts/build-sw.mjs",
     "preview": "vite preview --host 127.0.0.1",
     "test": "playwright test"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.0",
     "@playwright/test": "1.58.2",
+    "@types/node": "^22.20.1",
     "typescript": "^5.7.3",
     "vite": "^6.1.0"
   }

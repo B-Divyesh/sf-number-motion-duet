@@ -23,7 +23,7 @@ separate `demo:` storage key. See [Privacy](/privacy) and [Terms](/terms).
 ## Develop and verify
 
 ```sh
-npm install
+npm ci
 npm run dev
 npm test
 npm run build
@@ -32,7 +32,9 @@ npm run build
 `npm run build` is the deployment build command. It creates `dist/` with
 `index.html` at its root for Azure Static Web Apps. `npm test` builds the site,
 serves it locally, and runs Playwright checks for the demo sandbox, keyboard
-play, local storage separation, offline reload, routes, and accessibility.
+play, local storage separation, offline reload and update behavior, routes,
+touch targets, and accessibility. The build hashes app assets and generates a
+versioned service-worker cache so installed copies receive releases safely.
 
 No remote fonts, analytics, trackers, or runtime third-party scripts are used.
 The generated notebook illustration is original to this product; its prompt and

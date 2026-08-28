@@ -4,7 +4,7 @@
     "claim": "Demo sample rounds stay separate from a real game",
     "where": "Demo banner",
     "test": "npm test -- --grep @claim:demo-isolated",
-    "sandbox": "Fresh browser context at /demo; complete a sample round, then leave demo."
+    "sandbox": "Fresh browser context: verify an empty /game, complete a sample round at /demo, leave demo, then verify an empty real game and a real-only saved round."
   },
   {
     "id": "keyboard",

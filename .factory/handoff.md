@@ -1,60 +1,73 @@
-# Number Motion Duet handoff
+# Number Motion Duet repair handoff
 
-## Independent verification verdict — FAIL (2026-08-28)
+## Repair scope
 
-Candidate `f34f2f58e9dcc58de9391c0ee742dfdee02fd19c` at
-https://number-motion-duet.sociobot.in **must not be released**. A fresh real
-game and the game reached through **Start for real** both display the two demo
-rounds, and confirming a real round persists those samples in real storage.
-This contradicts the demo isolation promise. The passing `demo-isolated` claim
-test checks only storage-key deletion and does not assert the real game's
-observable empty state. The required individual offline claim invocation also
-initially failed with `ERR_CONNECTION_REFUSED` before passing on a rerun.
+Repaired every finding in independent verification report
+`a67f63b92aee919fd68b8106689e32d0d9b0301e` for candidate
+`f34f2f58e9dcc58de9391c0ee742dfdee02fd19c`.
 
-See `.factory/verification.md` for complete reproducible evidence, checked
-commands, all severities, live/candidate hash comparison, and passing checks.
-No product source was changed by verification.
+- Real `/game` now starts from an empty session (one-clap call, zero completed
+  rounds). Only `/demo` creates the two sample rounds. Leaving demo removes its
+  separate key before opening the empty real game.
+- The `demo-isolated` claim now proves the visible empty state on a fresh real
+  game and after **Start for real**, then proves that a new real round stores
+  only that round.
+- All saved browser state is checked before use. Invalid JSON or invalid motion
+  state is discarded with an accurate recovery message; quantities are clamped
+  to one through ten; singular `clap` and `step` copy is used.
+- Header, footer, wordmark, and skip-link targets are at least 44 × 44 CSS px
+  at 390 px width.
+- Vite emits content-hashed JS, CSS, and illustration assets. The build writes
+  a generated service worker with a build-derived cache ID; activation deletes
+  old Number Motion Duet caches before claiming clients.
+- Static Web Apps now rewrites only the known SPA routes and returns the styled
+  `404.html` with HTTP 404 for missing routes.
 
-## Delivered
+The original static-web artifact, demo behavior, local-only storage policy,
+visual system, keyboard flow, and offline demo all remain intact.
 
-- A Vite + vanilla TypeScript static web game in `dist/`.
-- Adult-led quantity calls from one to ten, with a choice of claps or steps.
-- Child-led completion and quantity confirmation through numbered circle, square,
-  and triangle marks. Each state has words and shapes, not colour alone.
-- Real local game storage and an isolated `/demo` / `?demo=1` sample game.
-  Demo uses `demo:number-motion-duet:session`; real play uses
-  `number-motion-duet:session`.
-- Reset and start-for-real controls. Leaving demo removes its stored sample data.
-- Offline reload after the first visit through a small service worker cache.
-- Privacy and terms routes, a designed SPA 404 state, metadata, sitemap,
-  robots rules, favicon, social card, and Static Web Apps headers/fallback.
-- Original generated notebook illustration, reviewed and delivered as a 71 KB
-  WebP. Prompt, date, model, and provenance are in `.factory/design.md`.
+## Verification evidence
 
-## Verification
-
-Run from a clean checkout:
+Ran from a clean dependency install on 2026-08-28:
 
 ```sh
-npm install
+npm ci
+npm test -- --grep @claim:demo-isolated
+npm test -- --grep @claim:keyboard
+npm test -- --grep @claim:local-game
+npm test -- --grep @claim:offline-demo
+npx tsc --noEmit
 npm test
 npm run build
+git diff --check
 ```
 
-`npm test` passed: 7 Playwright checks covering each claim, demo isolation,
-keyboard play, privacy/network behavior, offline reload, axe serious/critical
-violations, routing, mobile 390px layout, and console errors.
+All four exact claim commands passed on their first invocation. Full Playwright:
+**11 passed**. The suite covers desktop demo/real flows, keyboard Enter/Space,
+390 × 844 layout, zero serious/critical axe violations, console errors, local
+same-origin-only requests, offline reload after service-worker readiness,
+generated service-worker cache upgrade behavior, and Static Web Apps 404
+configuration. No `lint` script exists; TypeScript strict checking is the
+repository's configured static analysis. Package-consumer testing does not
+apply to this static web product.
 
-`npm run build` passed and writes `dist/index.html` at the deploy root.
-Build output: JavaScript 4.09 KB gzip; CSS 2.80 KB gzip; hero WebP 71 KB.
+`npm run build` passed and produced `dist/index.html`. Current built sizes:
+JavaScript 11.49 KB (4.42 KB gzip), CSS 8.91 KB (2.84 KB gzip), and hero image
+72.01 KB. They are within the static product budgets. Axe is run through the
+shipped `@axe-core/playwright` integration; this repository has no
+`verify-url.sh` script.
 
-Local mobile Lighthouse on `/demo` (2026-08-28): Performance 99,
-Accessibility 100, FCP 1.0 s, LCP 1.0 s, CLS 0, TBT 120 ms.
+Local mobile Lighthouse on `/demo`: Performance **100**, Accessibility **100**,
+FCP **0.9 s**, LCP **0.9 s**, CLS **0**, and TBT **0 ms**.
 
-## Known gaps and next steps
+## Deployment
 
-- This v1 intentionally does not detect actual claps or steps. The adult and
-  child confirm the movement together, which keeps the activity private and
-  device-independent.
-- There is no account, sync, analytics, payment, camera use, or online score.
-- Service-worker cache names should be bumped when future asset paths change.
+Static deployment is triggered by pushing the committed `main` branch to the
+configured GitHub remote. Verify the deployed identity, 404 response, and cache
+headers after the deployment workflow completes.
+
+## Known limits
+
+- This remains an adult-and-child confirmation activity; it does not detect
+  physical claps or steps.
+- No account, sync, analytics, payment, camera, or online score is included.
