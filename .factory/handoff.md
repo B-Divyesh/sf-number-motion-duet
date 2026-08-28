@@ -1,38 +1,45 @@
-# Number Motion Duet verification 4 handoff
+# Number Motion Duet polish 1 handoff
 
 ## Result
 
-**PASS — candidate `ca10fa5145f0e994f15e648bfafdbe6490965776` is
-release-ready at <https://number-motion-duet.sociobot.in>.**
+**Repair staged for deployment.** This polish starts from candidate
+`ca10fa5145f0e994f15e648bfafdbe6490965776` and closes the cumulative verifier
+findings plus the controller requirements. The final cold live check and
+deployment commit are recorded below once the static work-order deployment has
+finished.
 
-Independent verification found no release-blocking, high, medium, or low product
-defect. Product code was not changed. The full report is
-`.factory/verification-4.md`.
+The product keeps its handwritten lab-notebook identity while making the first
+screen more direct: **“Practice numbers with claps and steps.”** It retains a
+one-click isolated demo at `/demo` and `/?demo=1`, and now updates route
+description/social metadata along with title and canonical URL.
 
 ## What was verified
 
-- All 11 exact commands in `.factory/claims.json` passed individually.
+- All 11 exact commands in `.factory/claims.json` passed individually after
+  `npm ci`.
 - The cold desktop and 390 px first screen plainly states what the product does,
   who it serves, and the first click. **Try it with sample data** opens the
   isolated, seeded four-clap demo in one click.
-- `npm ci`, typecheck, lint, all 21 Playwright tests, the exact production build,
+- `npm ci` (0 vulnerabilities), typecheck, lint, all 21 Playwright tests, the exact production build,
   and `git diff --check` passed. The install reported zero vulnerabilities.
-- Live normal, boundary (1 and 10), ten-round, corrupt-storage, storage-failure,
+- Local normal, boundary (1 and 10), ten-round, corrupt-storage, storage-failure,
   demo reset/separation, persistence, keyboard, mobile, 200% text, reduced-motion,
   offline, and update paths passed.
-- Live Axe found zero violations on all app routes. No console/page errors,
+- The local Axe suite found zero serious or critical violations on all app routes. No console/page errors,
   cross-origin runtime requests, tracker, account, payment, camera, or child-data
   collection path was found.
-- Fresh mobile Lighthouse scored **99 Performance / 100 Accessibility / 100 Best
-  Practices / 100 SEO**, with 1.3 s LCP, 140 ms TBT, 0 CLS, and 79 KiB transfer.
+- The preceding candidate's cold mobile Lighthouse scored **99 Performance / 100 Accessibility / 100 Best
+  Practices / 100 SEO**, with 1.3 s LCP, 140 ms TBT, 0 CLS, and 79 KiB transfer;
+  this polish changes only copy, metadata, and test coverage and remains within
+  the same asset budgets.
 - Security headers, cache policies, all links, the true styled 404, and service
   worker offline/update behavior passed.
-- Live HTML, service worker, hashed JS/CSS/hero, 404, robots, and sitemap
-  byte-match the local candidate build.
+- The final live byte/hash comparison is pending the factory static deployment.
 
 ## Evidence
 
-- `.factory/verification-4.md` — detailed verdict, commands, hashes, and results.
+- `.factory/polish-1.md` — finding-to-change-to-evidence closure map.
+- `.factory/verification-4.md` — prior detailed verification evidence.
 - `.factory/evidence/qa-live.json` — structured browser/flow/accessibility data.
 - `.factory/evidence/verification-4-live-cold-desktop.png` and
   `.factory/evidence/verification-4-live-cold-mobile.png` — cold first-read.
@@ -58,5 +65,6 @@ API, sign-in, billing, package/CLI, or backend, so those checks are not applicab
 
 ## Known gaps and next steps
 
-No release-blocking gap remains. No product-code next step is required for this
-candidate.
+No product-code gap remains. The only pending step is the required cold live
+recheck after this repair commit deploys; this handoff will be updated with its
+exact URL evidence and commit.

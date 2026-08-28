@@ -6,12 +6,13 @@ type Round = { count: number; motion: Motion };
 type Session = { motion: Motion; count: number; rounds: Round[]; confirmed: boolean };
 
 const app = document.querySelector<HTMLDivElement>('#app')!;
-const titles: Record<string, string> = {
-  '/': 'Number Motion Duet — Move together to learn numbers',
-  '/demo': 'Demo — Number Motion Duet',
-  '/game': 'Play — Number Motion Duet',
-  '/privacy': 'Privacy — Number Motion Duet',
-  '/terms': 'Terms — Number Motion Duet'
+type RouteMeta = { title: string; description: string; path: string };
+const routeMeta: Record<string, RouteMeta> = {
+  '/': { title: 'Number Motion Duet — Move together to learn numbers', description: 'A shared clap or step game for caregivers and preschoolers learning numbers.', path: '/' },
+  '/demo': { title: 'Demo — Number Motion Duet', description: 'Try a ready-made clap and step game with sample rounds that stay separate from your game.', path: '/demo' },
+  '/game': { title: 'Play — Number Motion Duet', description: 'Choose claps or steps, call a number, and keep shared movement rounds in this browser.', path: '/game' },
+  '/privacy': { title: 'Privacy — Number Motion Duet', description: 'Read how Number Motion Duet keeps completed rounds in this browser and does not ask for child details.', path: '/privacy' },
+  '/terms': { title: 'Terms — Number Motion Duet', description: 'Read the simple terms for this free shared movement game for caregivers and children.', path: '/terms' }
 };
 let online = navigator.onLine;
 let status = '';
@@ -91,7 +92,7 @@ function layout(content: string) {
   <div class="sr-only" aria-live="polite" aria-atomic="true" id="route-announcement"></div>`;
 }
 function landing() {
-  return `<section class="hero" aria-labelledby="home-title"><div><p class="eyebrow">A shared table game</p><h1 id="home-title">Make number play a shared movement game</h1><p class="lead">For caregivers and preschoolers who want numbers to involve both bodies.</p><div class="actions"><a class="button primary" href="/demo" data-link>Try it with sample data</a><span class="action-note">Starts a ready-made clap round.</span></div><ul class="facts"><li>Play without an account.</li><li>Use touch or keyboard.</li><li>Free to play.</li></ul></div><img class="hero-art" src="${heroArt}" width="1200" height="800" fetchpriority="high" decoding="async" alt="An open notebook with wooden circle, triangle, square, star, and heart counting pieces." /></section>
+  return `<section class="hero" aria-labelledby="home-title"><div><p class="eyebrow">A shared table game</p><h1 id="home-title">Practice numbers with claps and steps</h1><p class="lead">For caregivers and preschoolers who want numbers to involve both bodies.</p><div class="actions"><a class="button primary" href="/demo" data-link>Try it with sample data</a><span class="action-note">Starts a ready-made clap round.</span></div><ul class="facts"><li>Play without an account.</li><li>Use touch or keyboard.</li><li>Free to play.</li></ul></div><img class="hero-art" src="${heroArt}" width="1200" height="800" fetchpriority="high" decoding="async" alt="An open notebook with wooden circle, triangle, square, star, and heart counting pieces." /></section>
   <section class="section" aria-labelledby="how-title"><p class="eyebrow">Take turns</p><h2 id="how-title">Make one number a whole-body idea</h2><div class="steps"><article class="step"><span class="step-number">1</span><h3>Choose the motion</h3><p>The adult picks claps or steps before the round.</p></article><article class="step"><span class="step-number">2</span><h3>Call the number</h3><p>The adult taps a number and says it aloud.</p></article><article class="step"><span class="step-number">3</span><h3>Make the marks</h3><p>The child moves. Both see one shape for each motion.</p></article></div></section>
   <section class="section plain-note" aria-labelledby="privacy-note"><span aria-hidden="true">✦</span><div><h2 id="privacy-note">A game, not a drill app</h2><p>There are no videos, ads, accounts, cameras, or online scores. The adult stays part of the loop.</p><p><a href="/game" data-link>Start a new game without sample rounds.</a></p></div></section>`;
 }
@@ -116,10 +117,20 @@ function legal(kind: 'privacy' | 'terms') {
 function notFound() { return `<section class="not-found"><p class="eyebrow">Page not found</p><h1>That page has wandered off.</h1><p>Try the shared number game from the beginning.</p><a class="button primary" href="/" data-link>Go to the home page</a></section>`; }
 function page() { const path = location.pathname; if (isDemo()) return game(); if (path === '/') return landing(); if (path === '/game') return game(); if (path === '/privacy') return legal('privacy'); if (path === '/terms') return legal('terms'); return notFound(); }
 function routeName() { if (isDemo()) return 'Demo game'; if (location.pathname === '/game') return 'Game'; if (location.pathname === '/privacy') return 'Privacy'; if (location.pathname === '/terms') return 'Terms'; if (location.pathname === '/') return 'Home'; return 'Page not found'; }
+function setMeta(selector: string, value: string) {
+  document.querySelector<HTMLMetaElement>(selector)?.setAttribute('content', value);
+}
 function render(announce = false, focusSelector?: string) {
-  document.title = isDemo() ? titles['/demo'] : titles[location.pathname] || 'Page not found — Number Motion Duet';
-  const canonicalPath = isDemo() ? '/demo' : location.pathname;
-  document.querySelector<HTMLLinkElement>('link[rel="canonical"]')?.setAttribute('href', new URL(canonicalPath, location.origin).href);
+  const meta = isDemo() ? routeMeta['/demo'] : routeMeta[location.pathname] || { title: 'Page not found — Number Motion Duet', description: 'The requested Number Motion Duet page was not found.', path: location.pathname };
+  document.title = meta.title;
+  const canonical = new URL(meta.path, location.origin).href;
+  document.querySelector<HTMLLinkElement>('link[rel="canonical"]')?.setAttribute('href', canonical);
+  setMeta('meta[name="description"]', meta.description);
+  setMeta('meta[property="og:title"]', meta.title);
+  setMeta('meta[property="og:description"]', meta.description);
+  setMeta('meta[property="og:url"]', canonical);
+  setMeta('meta[name="twitter:title"]', meta.title);
+  setMeta('meta[name="twitter:description"]', meta.description);
   app.innerHTML = layout(page());
   app.querySelectorAll<HTMLAnchorElement>('[data-link]').forEach((link) => link.addEventListener('click', (event) => { event.preventDefault(); status = ''; nav(link.pathname); }));
   app.querySelectorAll<HTMLButtonElement>('[data-motion]').forEach((button) => button.addEventListener('click', () => { status = ''; const session = readSession(); session.motion = button.dataset.motion as Motion; session.confirmed = false; saveSession(session); render(false, `[data-motion="${session.motion}"]`); }));

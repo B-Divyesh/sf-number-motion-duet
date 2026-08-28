@@ -5,6 +5,7 @@ plain-words terms appear.
 
 | Copy | Words | Result |
 | --- | ---: | --- |
+| Practice numbers with claps and steps | 6 | Pass |
 | For caregivers and preschoolers who want numbers to involve both bodies. | 10 | Pass |
 | Starts a ready-made clap round. | 5 | Pass |
 | Play without an account. | 4 | Pass |

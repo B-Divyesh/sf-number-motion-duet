@@ -74,6 +74,10 @@ test('@claim:seeded-demo The first-screen sample action opens a ready-made four-
   await expect(page.getByText('2 rounds marked')).toBeVisible();
   await expect(page.getByRole('button', { name: 'We did 4 claps' })).toBeVisible();
   await expect(page.locator('.round-log li')).toHaveText(['3 steps', '2 claps']);
+  await page.goto('/?demo=1');
+  await expect(page).toHaveTitle('Demo — Number Motion Duet');
+  await expect(page.getByText('Demo — sample data, nothing is saved to your game.')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'We did 4 claps' })).toBeVisible();
 });
 
 test('@claim:shape-amount One shape mark appears for each completed motion', async ({ page }) => {
@@ -244,11 +248,17 @@ test('@claim:no-remote-resources Uses no remote fonts, analytics, trackers, or r
   expect(await page.locator('script[src^="http"], link[rel="stylesheet"][href^="http"]').count()).toBe(0);
 });
 
-test('updates canonical metadata for each real app URL', async ({ page }) => {
+test('updates titles, descriptions, social metadata, and canonicals for real app URLs', async ({ page }) => {
   await page.goto('/demo');
+  await expect(page).toHaveTitle('Demo — Number Motion Duet');
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'http://127.0.0.1:4173/demo');
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', 'Try a ready-made clap and step game with sample rounds that stay separate from your game.');
+  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', 'http://127.0.0.1:4173/demo');
   await page.getByRole('link', { name: 'Privacy' }).first().click();
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'http://127.0.0.1:4173/privacy');
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', 'Read how Number Motion Duet keeps completed rounds in this browser and does not ask for child details.');
+  await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', 'Privacy — Number Motion Duet');
+  await expect(page.locator('meta[name="twitter:description"]')).toHaveAttribute('content', 'Read how Number Motion Duet keeps completed rounds in this browser and does not ask for child details.');
 });
 
 test('@claim:release-updates Installed copies receive releases safely', async () => {
