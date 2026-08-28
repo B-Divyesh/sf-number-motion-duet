@@ -18,8 +18,8 @@ Repaired every finding in independent verification report
 - Header, footer, wordmark, and skip-link targets are at least 44 × 44 CSS px
   at 390 px width.
 - Vite emits content-hashed JS, CSS, and illustration assets. The build writes
-  a generated service worker with a build-derived cache ID; activation deletes
-  old Number Motion Duet caches before claiming clients.
+  a generated service worker whose cache ID hashes every precached file;
+  activation deletes old Number Motion Duet caches before claiming clients.
 - Static Web Apps now rewrites only the known SPA routes and returns the styled
   `404.html` with HTTP 404 for missing routes.
 
@@ -36,20 +36,20 @@ npm test -- --grep @claim:demo-isolated
 npm test -- --grep @claim:keyboard
 npm test -- --grep @claim:local-game
 npm test -- --grep @claim:offline-demo
-npx tsc --noEmit
+npm run lint
 npm test
 npm run build
 git diff --check
 ```
 
 All four exact claim commands passed on their first invocation. Full Playwright:
-**11 passed**. The suite covers desktop demo/real flows, keyboard Enter/Space,
+**12 passed**. The suite covers desktop demo/real flows, keyboard Enter/Space,
 390 × 844 layout, zero serious/critical axe violations, console errors, local
 same-origin-only requests, offline reload after service-worker readiness,
-generated service-worker cache upgrade behavior, and Static Web Apps 404
-configuration. No `lint` script exists; TypeScript strict checking is the
-repository's configured static analysis. Package-consumer testing does not
-apply to this static web product.
+generated service-worker cache upgrade behavior (including a changed precached
+shell file receiving a new cache ID), and Static Web Apps 404 configuration.
+`npm run lint` runs strict TypeScript checking. Package-consumer testing does
+not apply to this static web product.
 
 `npm run build` passed and produced `dist/index.html`. Current built sizes:
 JavaScript 11.49 KB (4.42 KB gzip), CSS 8.91 KB (2.84 KB gzip), and hero image
@@ -63,8 +63,8 @@ FCP **0.9 s**, LCP **0.9 s**, CLS **0**, and TBT **0 ms**.
 ## Deployment
 
 Static deployment is triggered by pushing the committed `main` branch to the
-configured GitHub remote. Verify the deployed identity, 404 response, and cache
-headers after the deployment workflow completes.
+configured GitHub remote. The post-push check verifies the deployed identity,
+404 response, and cache headers after the deployment workflow completes.
 
 ## Known limits
 

@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -p tsconfig.json && vite build && node scripts/build-sw.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "npm run typecheck",
     "preview": "vite preview --host 127.0.0.1",
     "test": "playwright test"
   },

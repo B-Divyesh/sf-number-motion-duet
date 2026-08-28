@@ -1,7 +1,13 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-import { readFile } from 'node:fs/promises';
+import { cp, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { runInNewContext } from 'node:vm';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
+
+const execFileAsync = promisify(execFile);
 
 test('@claim:demo-isolated Demo sample rounds stay separate from a real game', async ({ page }) => {
   await page.goto('/game');
@@ -154,6 +160,26 @@ test('production service worker updates an old controlled client cache to the cu
   events.get('activate')!({ waitUntil: (promise) => { activation = promise; } });
   await activation;
   expect(deleted).toEqual(['number-motion-duet-old-release']);
+});
+
+test('production service worker gets a new cache ID when a precached shell file changes', async () => {
+  const temporaryDist = await mkdtemp(join(tmpdir(), 'number-motion-duet-sw-'));
+  try {
+    await cp('dist', temporaryDist, { recursive: true });
+    const buildWorker = () => execFileAsync(process.execPath, ['scripts/build-sw.mjs'], {
+      env: { ...process.env, SW_DIST_DIR: temporaryDist }
+    });
+    await buildWorker();
+    const first = await readFile(join(temporaryDist, 'sw.js'), 'utf8');
+    const firstCache = first.match(/const CACHE = '([^']+)'/)![1];
+    await writeFile(join(temporaryDist, 'index.html'), `${await readFile(join(temporaryDist, 'index.html'), 'utf8')}<!-- changed shell -->`);
+    await buildWorker();
+    const second = await readFile(join(temporaryDist, 'sw.js'), 'utf8');
+    const secondCache = second.match(/const CACHE = '([^']+)'/)![1];
+    expect(secondCache).not.toBe(firstCache);
+  } finally {
+    await rm(temporaryDist, { recursive: true, force: true });
+  }
 });
 
 test('Static Web Apps has a real styled 404 response override', async () => {
