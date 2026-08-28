@@ -92,7 +92,14 @@ async function observe(page) {
     empty: await page.getByText('Completed rounds will appear here.').isVisible(),
     storage: await page.evaluate(() => ({ demo: localStorage.getItem('demo:number-motion-duet:session'), real: localStorage.getItem('number-motion-duet:session') }))
   };
-  report.flow = { firstScreen, initialDemo, boundaryTen, wrappedAfterTen, boundaryOne, reset, realAfterDemo, externalRequests: observed.requests.filter((r) => new URL(r.url).origin !== base), consoleErrors: observed.consoleErrors, pageErrors: observed.pageErrors };
+  await page.getByRole('button', { name: 'We did 1 clap' }).click();
+  await page.reload({ waitUntil: 'networkidle' });
+  const persistedReal = {
+    roundCountText: await page.locator('.round-count').textContent(),
+    log: await page.locator('.round-log li').allTextContents(),
+    storage: await page.evaluate(() => JSON.parse(localStorage.getItem('number-motion-duet:session') ?? '{}').rounds)
+  };
+  report.flow = { firstScreen, initialDemo, boundaryTen, wrappedAfterTen, boundaryOne, reset, realAfterDemo, persistedReal, externalRequests: observed.requests.filter((r) => new URL(r.url).origin !== base), consoleErrors: observed.consoleErrors, pageErrors: observed.pageErrors };
   await context.close();
 }
 
@@ -126,6 +133,7 @@ async function observe(page) {
   }
   await page.getByRole('button', { name: '5', exact: true }).focus();
   await page.keyboard.press('Enter');
+  await page.waitForFunction(() => document.activeElement?.textContent?.trim() === '5');
   const focusAfterSelection = await page.evaluate(() => ({ tag: document.activeElement?.tagName, text: document.activeElement?.textContent?.trim().slice(0, 80) }));
   await page.getByRole('button', { name: 'We did 5 claps' }).focus();
   await page.keyboard.press('Space');

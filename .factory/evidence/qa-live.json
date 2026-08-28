@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-28T16:06:00.228Z",
+  "generatedAt": "2026-08-28T16:44:53.636Z",
   "base": "https://number-motion-duet.sociobot.in",
   "routes": [
     {
@@ -143,6 +143,18 @@
         "demo": null,
         "real": null
       }
+    },
+    "persistedReal": {
+      "roundCountText": "1 round marked",
+      "log": [
+        "1 clap"
+      ],
+      "storage": [
+        {
+          "count": 1,
+          "motion": "claps"
+        }
+      ]
     },
     "externalRequests": [],
     "consoleErrors": [],
@@ -358,8 +370,8 @@
       }
     ],
     "focusAfterSelection": {
-      "tag": "BODY",
-      "text": "Skip to the game\n  Number Motion Duet\n  DemoPlayPrivacy\n  Demo — sample data, no"
+      "tag": "BUTTON",
+      "text": "5"
     },
     "keyboardResult": true,
     "routeFocus": {
@@ -527,11 +539,11 @@
     "status": true,
     "cachesBefore": [
       {
-        "name": "number-motion-duet-044ee077427c",
+        "name": "number-motion-duet-43e7f7a06169",
         "paths": [
           "/",
           "/apple-touch-icon.svg",
-          "/assets/index-DGGN94E8.js",
+          "/assets/index-BNUziDtJ.js",
           "/assets/notebook-hero-CdjKL61a.webp",
           "/assets/style-rXKT0Oem.css",
           "/demo",
