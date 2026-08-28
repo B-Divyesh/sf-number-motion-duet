@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-28T19:36:14.066Z",
+  "generatedAt": "2026-08-28T20:36:42.930Z",
   "base": "https://number-motion-duet.sociobot.in",
   "routes": [
     {
@@ -92,10 +92,23 @@
       "consoleErrors": [
         "Failed to load resource: the server responded with a status of 404 ()"
       ],
-      "pageErrors": []
+      "pageErrors": [],
+      "metadata": {
+        "canonical": "https://number-motion-duet.sociobot.in/404.html",
+        "ogType": "website",
+        "ogTitle": "Page not found — Number Motion Duet",
+        "ogDescription": "The requested Number Motion Duet page was not found.",
+        "ogUrl": "https://number-motion-duet.sociobot.in/404.html",
+        "ogImage": "https://number-motion-duet.sociobot.in/assets/social-card.svg",
+        "twitterCard": "summary_large_image",
+        "twitterTitle": "Page not found — Number Motion Duet",
+        "twitterDescription": "The requested Number Motion Duet page was not found.",
+        "appleTouchIcon": "/apple-touch-icon.svg"
+      },
+      "screenshot": ".factory/evidence/polish-4-live-404.png"
     }
   ],
-  "polish3": {
+  "polish4": {
     "firstScreen": [
       {
         "label": "Practice numbers with claps and steps",
@@ -135,7 +148,7 @@
       "viewport": 844
     },
     "homeScroll": 1375,
-    "screenshot": ".factory/evidence/polish-3-live-first-screen-mobile.png",
+    "screenshot": ".factory/evidence/polish-4-live-first-screen-mobile.png",
     "consoleErrors": [],
     "pageErrors": []
   },
