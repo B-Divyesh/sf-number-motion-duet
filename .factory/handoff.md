@@ -1,31 +1,67 @@
-# Review 2 handoff — Number Motion Duet
+# Polish 2 handoff — Number Motion Duet
 
 ## Result
 
-Review completed without changing product code. The required report is
-`.factory/review-2.md`.
+Polish round 2 closes every finding in `.factory/review-2.md` and preserves the
+handwritten lab-notebook visual system. The product repair is commit
+`627a39f1b283b1d97b62f6948fe54c0063017f26`.
 
-**Verdict: FAIL.** The live product passes the functional, demo-isolation,
-privacy, claims, routing, accessibility, and responsive checks. Five minor
-plain-words findings remain: four README rewrites and one abstract landing H2.
-They are fully specified as `F-2-1` through `F-2-5` in the review.
+The production build was deployed directly to the configured Azure Static Web
+App, `sf-number-motion-duet`, at
+<https://number-motion-duet.sociobot.in>.
 
-## Verification performed
+## Changes
 
-- Fresh live browser contexts at desktop and 390 px: first-read, demo flow,
-  reset, Start for real, localStorage separation, same-origin requests, offline
-  demo reload, route focus/back behavior, metadata, links, and styled HTTP 404.
-- Live Axe scans on `/`, `/demo`, `/game`, `/privacy`, and `/terms`: no
-  violations.
-- Fresh temporary clone: `npm ci`, every exact command in
-  `.factory/claims.json` (11/11 passed), `npm test` (21/21 passed), `npm run
-  build` (passed and created `dist/`), and `git diff --check`.
-- Read the brief, design, claims, demo documentation, prior verifier records,
-  polish record, and prior handoff. Earlier functional findings were confirmed
-  fixed in both live behavior and source.
+- Rewrote all four README sentences flagged for jargon or length. They now use
+  the visitor language “this browser,” “sample rounds,” and “new file names.”
+- Replaced the abstract landing H2 with “Turn a number into claps or steps.”
+- Kept the release-update claim registered while expressing it in plain words.
+- Expanded `.factory/copy-audit.md` to cover every landing and README sentence.
+- Added a browser regression test for the landing job, direct sample action,
+  and revised turn-taking heading.
 
-## Remaining work
+## Verification
 
-Apply the five copy fixes in `.factory/review-2.md`, then repeat the clean-clone
-claim commands, full test/build, and cold 390 px first-read check. No product
-code was modified during this review.
+From a clean clone at `/tmp/number-motion-duet-clean-KILRAO`:
+
+- `npm ci` completed with 0 vulnerabilities.
+- `npm run typecheck`, `npm run lint`, and `npm run build` passed.
+- Every exact command in `.factory/claims.json` passed: 11/11.
+- `npm test` passed: 22/22.
+
+On the final checkout:
+
+- `git diff --check`, `npm run typecheck`, `npm run lint`, `npm run build`, and
+  `npm test` passed.
+- The production build is 13.28 kB JavaScript (4.89 kB gzip), 9.20 kB CSS
+  (2.88 kB gzip), and 72.01 kB original WebP art.
+- Live Playwright + Axe audit: `/`, `/demo`, `/game`, `/privacy`, and `/terms`
+  each returned 200 with one H1 and main landmark; Axe found zero violations;
+  no console/page errors or external requests were recorded.
+- Live mobile audit at 390 px found no horizontal overflow, no targets smaller
+  than 44 px, and no overflow at 200% text. Reduced motion disabled animation.
+- The live `/demo` offline reload worked after its first visit. `?demo=1`
+  showed the persistent demo banner and Reset demo restored the seed. A missing
+  route returned the styled 404 with HTTP 404.
+- Mobile Lighthouse on the final live home page: performance 100,
+  accessibility 100, best practices 100, SEO 100.
+
+Evidence: `.factory/evidence/qa-live.json`,
+`.factory/evidence/polish-2-cold-home-desktop.png`,
+`.factory/evidence/polish-2-cold-home-mobile.png`, and
+`.factory/evidence/lighthouse-polish-2-home.json`.
+
+## Run and deploy
+
+```sh
+npm ci
+npm test
+npm run build
+```
+
+Deploy `dist/` as a static Azure Static Web App. `public/staticwebapp.config.json`
+is copied into that directory by the build.
+
+## Known gaps
+
+None.
