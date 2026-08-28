@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-28T14:58:02.633Z",
+  "generatedAt": "2026-08-28T16:06:00.228Z",
   "base": "https://number-motion-duet.sociobot.in",
   "routes": [
     {
@@ -213,7 +213,7 @@
         "outline": "rgb(104, 76, 128) solid 4px",
         "box": [
           123,
-          35
+          44
         ]
       },
       {
@@ -223,7 +223,7 @@
         "outline": "rgb(104, 76, 128) solid 4px",
         "box": [
           134,
-          35
+          44
         ]
       },
       {
@@ -374,15 +374,13 @@
     }
   },
   "storageWriteFailure": {
-    "status": "",
-    "confirmationCount": 0,
-    "roundCount": "0 rounds marked"
+    "status": "Your browser could not save the game. You can still play this round.",
+    "confirmationCount": 1,
+    "roundCount": "1 round marked"
   },
   "storageDeleteFailure": {
-    "url": "https://number-motion-duet.sociobot.in/demo",
-    "pageErrors": [
-      "Access denied"
-    ]
+    "url": "https://number-motion-duet.sociobot.in/game",
+    "pageErrors": []
   },
   "mobile": {
     "measurements": {
@@ -417,12 +415,12 @@
         {
           "text": "Reset demo",
           "width": 123,
-          "height": 35
+          "height": 44
         },
         {
           "text": "Start for real",
           "width": 134,
-          "height": 35
+          "height": 44
         },
         {
           "text": "👏 Claps",
@@ -507,21 +505,10 @@
       ],
       "bodyFontSize": "16px"
     },
-    "tooSmall": [
-      {
-        "text": "Reset demo",
-        "width": 123,
-        "height": 35
-      },
-      {
-        "text": "Start for real",
-        "width": 134,
-        "height": 35
-      }
-    ],
+    "tooSmall": [],
     "text200": {
       "viewport": 390,
-      "scrollWidth": 619,
+      "scrollWidth": 390,
       "h1Visible": true,
       "confirmVisible": true
     },
@@ -540,13 +527,13 @@
     "status": true,
     "cachesBefore": [
       {
-        "name": "number-motion-duet-62e11a15bcc5",
+        "name": "number-motion-duet-044ee077427c",
         "paths": [
           "/",
           "/apple-touch-icon.svg",
-          "/assets/index-CUvO2bNl.js",
+          "/assets/index-DGGN94E8.js",
           "/assets/notebook-hero-CdjKL61a.webp",
-          "/assets/style-C6wM4nEX.css",
+          "/assets/style-rXKT0Oem.css",
           "/demo",
           "/favicon.svg",
           "/game",

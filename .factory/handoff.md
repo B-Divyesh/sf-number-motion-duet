@@ -1,10 +1,17 @@
-# Number Motion Duet repair handoff
+# Number Motion Duet verification handoff
 
-## Result
+## Result — FAIL
 
-This repair resolves every finding in the independent verifier report at
-`.factory/verification-2.md` for candidate
-`771f9e7712adee2f36de8bf1374b2eeb3a15d84f`.
+Independent verification of candidate
+`46d9212159b667c10bac6b5ac40043449e500cd9` at
+<https://number-motion-duet.sociobot.in> **FAILS release**. See
+`.factory/verification-3.md` for complete evidence.
+
+The deployed product is otherwise healthy and exactly matches the candidate.
+The release blocker is claims-contract coverage: the sole `local-game` claim
+test does not reload or otherwise prove the persistence it promises, and the
+visible “Starts a ready-made clap round” behavior has no claims entry/test.
+Product code was not changed during verification.
 
 ### Repairs
 
@@ -43,7 +50,7 @@ git diff --check
 - `npm test`: passed, **19/19** Playwright tests.
 - `npm run build`: passed and created `dist/index.html`.
 - `git diff --check`: passed.
-- Every exact registered claim command passed, including the five new commands:
+- Every exact registered claim command passed:
   `demo-isolated`, `keyboard`, `local-game`, `offline-demo`, `free-to-play`,
   `no-online-features`, `no-personal-details`, `no-remote-resources`, and
   `release-updates`.
@@ -60,8 +67,8 @@ git diff --check
 - Static response policy is retained in `dist/staticwebapp.config.json`: the
   same-origin CSP, `nosniff`, strict referrer policy, immutable hashed assets,
   explicit SPA route rewrites, and a real 404 response override.
-- Local mobile Lighthouse: **99 performance, 100 accessibility, 100 best
-  practices, 100 SEO**. FCP 1.0 s, LCP 1.6 s, TBT 110 ms, CLS 0.
+- Fresh live mobile Lighthouse: **99 performance, 100 accessibility, 100 best
+  practices, 100 SEO**. FCP 0.9 s, LCP 1.3 s, TBT 130 ms, CLS 0.
 - Build output is within the static budget: JS 12.27 KB (4.66 KB gzip), CSS
   9.20 KB (2.88 KB gzip), and hero WebP 72.01 KB.
 
@@ -101,7 +108,11 @@ Deployed `dist/` to Azure Static Web Apps on 2026-08-28:
   controls are 44 px high, number five retains focus after Enter, and 200% text
   remains at a 390 px document width with no off-screen content.
 
-## Known gaps
+## Known gaps / required next step
 
-None. If browser storage is disabled or full, a current visit remains playable
-in memory but its rounds cannot survive a reload; the UI announces this limit.
+Before release, add a `local-game` tagged assertion that verifies a completed
+round persists after reload, then register and test the ready-made sample-round
+claim (or remove that action note). Review the remaining shape-amount copy
+under the same claims rule. If browser storage is disabled or full, a current
+visit remains playable in memory but cannot survive a reload; the UI correctly
+announces this limit.
