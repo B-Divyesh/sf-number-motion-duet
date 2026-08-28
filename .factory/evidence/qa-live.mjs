@@ -45,7 +45,33 @@ async function observe(page) {
       ? result.consoleErrors.filter((message) => !message.includes('Failed to load resource'))
       : result.consoleErrors;
     assert(unexpectedConsoleErrors.length === 0 && result.pageErrors.length === 0, `${route} has browser errors`);
-    if (route === '/not-a-real-page') assert(result.h1[0] === 'Page not found.', '404 heading is not literal');
+    if (route === '/not-a-real-page') {
+      result.metadata = {
+        canonical: await page.locator('link[rel="canonical"]').getAttribute('href'),
+        ogType: await page.locator('meta[property="og:type"]').getAttribute('content'),
+        ogTitle: await page.locator('meta[property="og:title"]').getAttribute('content'),
+        ogDescription: await page.locator('meta[property="og:description"]').getAttribute('content'),
+        ogUrl: await page.locator('meta[property="og:url"]').getAttribute('content'),
+        ogImage: await page.locator('meta[property="og:image"]').getAttribute('content'),
+        twitterCard: await page.locator('meta[name="twitter:card"]').getAttribute('content'),
+        twitterTitle: await page.locator('meta[name="twitter:title"]').getAttribute('content'),
+        twitterDescription: await page.locator('meta[name="twitter:description"]').getAttribute('content'),
+        appleTouchIcon: await page.locator('link[rel="apple-touch-icon"]').getAttribute('href')
+      };
+      assert(result.h1[0] === 'Page not found.', '404 heading is not literal');
+      assert(result.metadata.canonical === 'https://number-motion-duet.sociobot.in/404.html', '404 canonical is missing or wrong');
+      assert(result.metadata.ogType === 'website', '404 Open Graph type is missing');
+      assert(result.metadata.ogTitle === 'Page not found — Number Motion Duet', '404 Open Graph title is missing');
+      assert(result.metadata.ogDescription === 'The requested Number Motion Duet page was not found.', '404 Open Graph description is missing');
+      assert(result.metadata.ogUrl === 'https://number-motion-duet.sociobot.in/404.html', '404 Open Graph URL is missing');
+      assert(result.metadata.ogImage === 'https://number-motion-duet.sociobot.in/assets/social-card.svg', '404 Open Graph image is missing');
+      assert(result.metadata.twitterCard === 'summary_large_image', '404 Twitter card is missing');
+      assert(result.metadata.twitterTitle === 'Page not found — Number Motion Duet', '404 Twitter title is missing');
+      assert(result.metadata.twitterDescription === 'The requested Number Motion Duet page was not found.', '404 Twitter description is missing');
+      assert(result.metadata.appleTouchIcon === '/apple-touch-icon.svg', '404 Apple touch icon is missing');
+      result.screenshot = '.factory/evidence/polish-4-live-404.png';
+      await page.screenshot({ path: result.screenshot, fullPage: true });
+    }
     routeResults.push(result);
     await page.close();
   }
@@ -58,7 +84,7 @@ async function observe(page) {
   const page = await context.newPage();
   const observed = await observe(page);
   await page.goto(base + '/', { waitUntil: 'networkidle' });
-  await page.screenshot({ path: '.factory/evidence/polish-3-live-first-screen-mobile.png' });
+  await page.screenshot({ path: '.factory/evidence/polish-4-live-first-screen-mobile.png' });
   const firstScreen = await page.evaluate(() => {
     const labels = ['Practice numbers with claps and steps', 'Try it with sample data', 'Play without an account.', 'Use touch or keyboard.', 'Free to play.'];
     const elements = labels.map((label) => [...document.querySelectorAll('h1, a, li')].find((element) => element.textContent?.trim() === label));
@@ -84,7 +110,7 @@ async function observe(page) {
   await page.waitForURL(base + '/');
   await page.waitForFunction((expected) => Math.abs(window.scrollY - expected) <= 1, homeScroll);
   assert(observed.consoleErrors.length === 0 && observed.pageErrors.length === 0, 'Mobile first-read flow has browser errors');
-  report.polish3 = { firstScreen, forwardRoute, homeScroll, screenshot: '.factory/evidence/polish-3-live-first-screen-mobile.png', consoleErrors: observed.consoleErrors, pageErrors: observed.pageErrors };
+  report.polish4 = { firstScreen, forwardRoute, homeScroll, screenshot: '.factory/evidence/polish-4-live-first-screen-mobile.png', consoleErrors: observed.consoleErrors, pageErrors: observed.pageErrors };
   await context.close();
 }
 

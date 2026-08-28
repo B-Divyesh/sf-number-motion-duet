@@ -61,6 +61,12 @@ commands are not visitor copy.
 | Demo details: `.factory/demo.md`. | 3 | Pass |
 | Verifiable visitor claims: `.factory/claims.json`. | 4 | Pass |
 
+## Catalog description
+
+| Copy | Words | Result |
+| --- | ---: | --- |
+| Practice preschool numbers together with claps and steps. | 8 | Pass — verb-first, 59 characters |
+
 ## Terminology
 
 | Concept | One term used |

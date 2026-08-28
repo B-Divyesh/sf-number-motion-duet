@@ -349,16 +349,28 @@ test('production service worker gets a new cache ID when a precached shell file 
   }
 });
 
-test('Static Web Apps has a real styled 404 response override', async () => {
+test('Static Web Apps serves a styled 404 with complete route metadata', async ({ page }) => {
   const config = JSON.parse(await readFile('public/staticwebapp.config.json', 'utf8'));
   expect(config.navigationFallback).toBeUndefined();
   expect(config.responseOverrides?.['404']).toEqual({ rewrite: '/404.html', statusCode: 404 });
-  const page404 = await readFile('public/404.html', 'utf8');
-  expect(page404).toContain('<main id="main"');
-  expect(page404).toContain('<h1>Page not found.</h1>');
-  expect(page404).toContain('aria-label="Main navigation"');
-  expect(page404).toContain('Built by Param Factory');
-  expect(page404).toContain('href="/terms"');
+  const response = await page.goto('/not-a-real-page');
+  expect(response?.status()).toBe(404);
+  await expect(page).toHaveTitle('Page not found — Number Motion Duet');
+  await expect(page.getByRole('main')).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: 'Page not found.' })).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Main navigation' })).toBeVisible();
+  await expect(page.getByText('Built by Param Factory')).toBeVisible();
+  await expect(page.locator('a[href="/terms"]')).toBeVisible();
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://number-motion-duet.sociobot.in/404.html');
+  await expect(page.locator('meta[property="og:type"]')).toHaveAttribute('content', 'website');
+  await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', 'Page not found — Number Motion Duet');
+  await expect(page.locator('meta[property="og:description"]')).toHaveAttribute('content', 'The requested Number Motion Duet page was not found.');
+  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', 'https://number-motion-duet.sociobot.in/404.html');
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', 'https://number-motion-duet.sociobot.in/assets/social-card.svg');
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
+  await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute('content', 'Page not found — Number Motion Duet');
+  await expect(page.locator('meta[name="twitter:description"]')).toHaveAttribute('content', 'The requested Number Motion Duet page was not found.');
+  await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute('href', '/apple-touch-icon.svg');
   const sitemap = await readFile('public/sitemap.xml', 'utf8');
   expect(sitemap).toContain('https://number-motion-duet.sociobot.in/game');
 });
