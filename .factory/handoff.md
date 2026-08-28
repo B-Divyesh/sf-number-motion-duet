@@ -1,57 +1,20 @@
-# Polish 2 handoff — Number Motion Duet
+# Review 3 handoff — Number Motion Duet
 
 ## Result
 
-Polish round 2 closes every finding in `.factory/review-2.md` and preserves the
-handwritten lab-notebook visual system. The product repair is commit
-`627a39f1b283b1d97b62f6948fe54c0063017f26`.
+Completed the requested adversarial first-read review without changing product code. The review is recorded in `.factory/review-3.md`.
 
-The production build was deployed directly to the configured Azure Static Web
-App, `sf-number-motion-duet`, at
-<https://number-motion-duet.sociobot.in>.
+**Verdict: FAIL.** Four minor findings remain: one first-screen mobile layout gap, a forward-route focus/scroll gap, a metaphorical 404 H1, and one unlisted/unverifiable landing promise.
 
-## Changes
+## Verification performed
 
-- Rewrote all four README sentences flagged for jargon or length. They now use
-  the visitor language “this browser,” “sample rounds,” and “new file names.”
-- Replaced the abstract landing H2 with “Turn a number into claps or steps.”
-- Kept the release-update claim registered while expressing it in plain words.
-- Expanded `.factory/copy-audit.md` to cover every landing and README sentence.
-- Added a browser regression test for the landing job, direct sample action,
-  and revised turn-taking heading.
+- Fresh live desktop and 390 px browser contexts at `https://number-motion-duet.sociobot.in`.
+- One-click demo, reset, start-real, storage-isolation, request-origin, and offline-reload checks.
+- Live Axe scans on `/`, `/demo`, `/game`, `/privacy`, `/terms`, and the 404: zero violations.
+- Clean clone: `npm ci` (0 vulnerabilities), each of the 11 exact claim commands in `.factory/claims.json`, `npm test` (22 passed), and `npm run build` (created `dist/index.html`).
+- Live route/link/status, metadata, focus, prior-finding, source, and copy audits.
 
-## Verification
-
-From a clean clone at `/tmp/number-motion-duet-clean-KILRAO`:
-
-- `npm ci` completed with 0 vulnerabilities.
-- `npm run typecheck`, `npm run lint`, and `npm run build` passed.
-- Every exact command in `.factory/claims.json` passed: 11/11.
-- `npm test` passed: 22/22.
-
-On the final checkout:
-
-- `git diff --check`, `npm run typecheck`, `npm run lint`, `npm run build`, and
-  `npm test` passed.
-- The production build is 13.28 kB JavaScript (4.89 kB gzip), 9.20 kB CSS
-  (2.88 kB gzip), and 72.01 kB original WebP art.
-- Live Playwright + Axe audit: `/`, `/demo`, `/game`, `/privacy`, and `/terms`
-  each returned 200 with one H1 and main landmark; Axe found zero violations;
-  no console/page errors or external requests were recorded.
-- Live mobile audit at 390 px found no horizontal overflow, no targets smaller
-  than 44 px, and no overflow at 200% text. Reduced motion disabled animation.
-- The live `/demo` offline reload worked after its first visit. `?demo=1`
-  showed the persistent demo banner and Reset demo restored the seed. A missing
-  route returned the styled 404 with HTTP 404.
-- Mobile Lighthouse on the final live home page: performance 100,
-  accessibility 100, best practices 100, SEO 100.
-
-Evidence: `.factory/evidence/qa-live.json`,
-`.factory/evidence/polish-2-cold-home-desktop.png`,
-`.factory/evidence/polish-2-cold-home-mobile.png`, and
-`.factory/evidence/lighthouse-polish-2-home.json`.
-
-## Run and deploy
+## How to reproduce
 
 ```sh
 npm ci
@@ -59,9 +22,8 @@ npm test
 npm run build
 ```
 
-Deploy `dist/` as a static Azure Static Web App. `public/staticwebapp.config.json`
-is copied into that directory by the build.
+Then open the live site at 390 × 844, scroll home to the footer, and use its Privacy link to reproduce F-3-2. See `.factory/review-3.md` for the complete findings and exact fixes.
 
 ## Known gaps
 
-None.
+The four review findings above are intentionally left unresolved because this was a review-only work order.
